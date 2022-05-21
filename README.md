@@ -16,23 +16,26 @@
 ## Tutorial
 
 1. `git clone this-repo`
-2. Install Hexo and built up the Hexo environment in your PC (There are tutorial HTML files in root folder)
-3. Unzip and place the `lua-5.3.6_Win32_bin` into your system environment in order to use some automatic tools
-4. `npm i`
-5. Unzip `hexo-asset-image.7z` in root folder then move it into the folder of `node_modules` to replace the old ones
-6. Open it in VS Code or any other IDE
-7. `hexo new "file name"`
-8. Revise blog contents.
-9.  Then run `lua deployer` in this folder, or conduct the following commands in console to deploy and push
-
+2. `npm i`
+3. `hexo new "file name"`
+4. `hexo clean` then `hexo s` to view in local serve page
+5. Revise blog contents.
+6. Unzip and place the `lua-5.3.6_Win32_bin` into your system environment in order to use some automatic tools
+7. Then run `lua deployer` in this folder, or conduct the following commands in console to deploy and push
 
 <br>
+
+_DO NOT DELETE ANY CONFIGS IN `config.yml`， otherwise you have to unzip `hexo-asset-image.7z` in root folder then move it into the folder of `node_modules` to replace the old ones._
+
 <br>
 <br>
 <br>
 <br>
 <br>
 <br>
+<br>
+
+---
 
 ## Reference
 
@@ -64,7 +67,7 @@ deploy:
 <br>
 
 
-1. [Install Hexo-Git-Depoyer](https://www.xiongtianci.com/2019/05/15/hexo-d%E5%91%BD%E4%BB%A4%E6%8A%A5%E9%94%99%EF%BC%9AERROR-Deployer-not-found-git/)
+1. [Install Hexo-Git-Deployer](https://www.xiongtianci.com/2019/05/15/hexo-d%E5%91%BD%E4%BB%A4%E6%8A%A5%E9%94%99%EF%BC%9AERROR-Deployer-not-found-git/)
 
 <br>
 
