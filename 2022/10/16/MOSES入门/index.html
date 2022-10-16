@@ -20,15 +20,15 @@
     var CONFIG = {"hostname":"ezharjan.github.io","root":"/Blog/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="Moses系统简介 摩西是统计（或称基于数据的）机器翻译（MT）的一个实现方法。这是该领域目前的主要方法，并被谷歌和微软等公司部署的在线翻译系统所采用。在统计机器翻译（SMT）中，翻译系统接受大量并行数据的训练（系统从中学习如何翻译小段），以及更大量的单语数据（系统从中学习目标语言应该怎么组织）。平行数据是两种不同语言的句子集合，它们是句子对齐的，因为一种语言的每个句子都与另一种语言中相应的翻译句">
+  <meta name="description" content="摩西是统计（或称基于数据的）机器翻译（MT）的一个实现方法。这是该领域目前的主要方法，并被谷歌和微软等公司部署的在线翻译系统所采用。在统计机器翻译（SMT）中，翻译系统接受大量并行数据的训练（系统从中学习如何翻译小段），以及更大量的单语数据（系统从中学习目标语言应该怎么组织）。平行数据是两种不同语言的句子集合，它们是句子对齐的，因为一种语言的每个句子都与另一种语言中相应的翻译句子相匹配，它也被称">
 <meta property="og:type" content="article">
 <meta property="og:title" content="MOSES入门">
 <meta property="og:url" content="https://ezharjan.github.io/Blog/2022/10/16/MOSES%E5%85%A5%E9%97%A8/index.html">
 <meta property="og:site_name">
-<meta property="og:description" content="Moses系统简介 摩西是统计（或称基于数据的）机器翻译（MT）的一个实现方法。这是该领域目前的主要方法，并被谷歌和微软等公司部署的在线翻译系统所采用。在统计机器翻译（SMT）中，翻译系统接受大量并行数据的训练（系统从中学习如何翻译小段），以及更大量的单语数据（系统从中学习目标语言应该怎么组织）。平行数据是两种不同语言的句子集合，它们是句子对齐的，因为一种语言的每个句子都与另一种语言中相应的翻译句">
+<meta property="og:description" content="摩西是统计（或称基于数据的）机器翻译（MT）的一个实现方法。这是该领域目前的主要方法，并被谷歌和微软等公司部署的在线翻译系统所采用。在统计机器翻译（SMT）中，翻译系统接受大量并行数据的训练（系统从中学习如何翻译小段），以及更大量的单语数据（系统从中学习目标语言应该怎么组织）。平行数据是两种不同语言的句子集合，它们是句子对齐的，因为一种语言的每个句子都与另一种语言中相应的翻译句子相匹配，它也被称">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2022-10-16T14:08:48.000Z">
-<meta property="article:modified_time" content="2022-10-16T16:59:13.825Z">
+<meta property="article:modified_time" content="2022-10-16T16:59:38.740Z">
 <meta property="article:author" content="Alexander Ezharjan">
 <meta property="article:tag" content="Machine Translation">
 <meta name="twitter:card" content="summary">
@@ -184,7 +184,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-10-17 00:59:13" itemprop="dateModified" datetime="2022-10-17T00:59:13+08:00">2022-10-17</time>
+                <time title="Modified: 2022-10-17 00:59:38" itemprop="dateModified" datetime="2022-10-17T00:59:38+08:00">2022-10-17</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -207,7 +207,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h1 id="Moses系统简介"><a href="#Moses系统简介" class="headerlink" title="Moses系统简介"></a>Moses系统简介</h1><hr>
+        <hr>
 <p>摩西是统计（或称基于数据的）机器翻译（MT）的一个实现方法。这是该领域目前的主要方法，并被谷歌和微软等公司部署的在线翻译系统所采用。在统计机器翻译（SMT）中，翻译系统接受大量并行数据的训练（系统从中学习如何翻译小段），以及更大量的单语数据（系统从中学习目标语言应该怎么组织）。平行数据是两种不同语言的句子集合，它们是句子对齐的，因为一种语言的每个句子都与另一种语言中相应的翻译句子相匹配，它也被称为bitext。</p>
 <p>摩西的训练过程接收平行数据，并使用单词和语言片段（即为短语）的同时出现来推断两种语言之间的对应关系。在基于短语的机器翻译中，这些对应关系仅在连续的单词序列之间，而在基于分层短语的机器翻译或基于语法的翻译中，更多关于句子的结构被添加到对应关系中。例如，一个分层的机器翻译系统可以知道德国hat<br>X gegessen 对应于英语中的ate<br>X，其中Xs能被任何德语-英语单词对所替换。在这些类型的系统中使用的额外结构可能或并不能从并行语料的语言分析得到。摩西还实现了基于短语的机器翻译的扩展，称为因式翻译，可以将额外的语言信息添加到基于短语的翻译系统中。</p>
 <p>有关摩西翻译模型的更多信息，请参见摩西网站上关于<a target="_blank" rel="noopener" href="http://www.statmt.org/moses/?n=Moses.Tutorial">基于短语的机器翻译系统</a>，基于<a target="_blank" rel="noopener" href="http://www.statmt.org/moses/?n=Moses.SyntaxTutorial">句法的翻译系统</a>或基于因子的翻译系统。</p>
@@ -525,7 +525,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Moses%E7%B3%BB%E7%BB%9F%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">Moses系统简介</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Moses%E7%B3%BB%E7%BB%9F%E7%9A%84%E7%BB%84%E6%88%90%E9%83%A8%E5%88%86"><span class="nav-number">1.1.</span> <span class="nav-text">Moses系统的组成部分</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B4%A1%E7%8C%AE%E5%B7%A5%E5%85%B7"><span class="nav-number">1.2.</span> <span class="nav-text">贡献工具</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80-%E5%AE%89%E8%A3%85%E7%9B%B8%E5%85%B3%E4%BE%9D%E8%B5%96%E9%A1%B9%EF%BC%9A"><span class="nav-number">1.3.</span> <span class="nav-text">一 安装相关依赖项：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C-%E5%AE%89%E8%A3%85%E8%AF%8D%E5%AF%B9%E9%BD%90%E5%B7%A5%E5%85%B7GIZA"><span class="nav-number">1.4.</span> <span class="nav-text">二 安装词对齐工具GIZA++</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89-%E8%AF%AD%E6%96%99%E5%87%86%E5%A4%87"><span class="nav-number">1.5.</span> <span class="nav-text">三 语料准备</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B-%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%EF%BC%88Language-Model-Training%EF%BC%89"><span class="nav-number">1.6.</span> <span class="nav-text">四 语言模型训练（Language Model Training）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94-%E8%AE%AD%E7%BB%83%E7%BF%BB%E8%AF%91%E6%A8%A1%E5%9E%8B%EF%BC%88Training-the-Translation-System%EF%BC%89"><span class="nav-number">1.7.</span> <span class="nav-text">五 训练翻译模型（Training the Translation System）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD-%E8%B0%83%E4%BC%98-Tuning"><span class="nav-number">1.8.</span> <span class="nav-text">六 调优(Tuning)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%83-%E6%B5%8B%E8%AF%95"><span class="nav-number">1.9.</span> <span class="nav-text">七 测试</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AB-%E6%90%AD%E5%BB%BAmoses-server"><span class="nav-number">1.10.</span> <span class="nav-text">八 搭建moses server</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Moses%E7%B3%BB%E7%BB%9F%E7%9A%84%E7%BB%84%E6%88%90%E9%83%A8%E5%88%86"><span class="nav-number">1.</span> <span class="nav-text">Moses系统的组成部分</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B4%A1%E7%8C%AE%E5%B7%A5%E5%85%B7"><span class="nav-number">2.</span> <span class="nav-text">贡献工具</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80-%E5%AE%89%E8%A3%85%E7%9B%B8%E5%85%B3%E4%BE%9D%E8%B5%96%E9%A1%B9%EF%BC%9A"><span class="nav-number">3.</span> <span class="nav-text">一 安装相关依赖项：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C-%E5%AE%89%E8%A3%85%E8%AF%8D%E5%AF%B9%E9%BD%90%E5%B7%A5%E5%85%B7GIZA"><span class="nav-number">4.</span> <span class="nav-text">二 安装词对齐工具GIZA++</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89-%E8%AF%AD%E6%96%99%E5%87%86%E5%A4%87"><span class="nav-number">5.</span> <span class="nav-text">三 语料准备</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B-%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%EF%BC%88Language-Model-Training%EF%BC%89"><span class="nav-number">6.</span> <span class="nav-text">四 语言模型训练（Language Model Training）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94-%E8%AE%AD%E7%BB%83%E7%BF%BB%E8%AF%91%E6%A8%A1%E5%9E%8B%EF%BC%88Training-the-Translation-System%EF%BC%89"><span class="nav-number">7.</span> <span class="nav-text">五 训练翻译模型（Training the Translation System）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD-%E8%B0%83%E4%BC%98-Tuning"><span class="nav-number">8.</span> <span class="nav-text">六 调优(Tuning)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%83-%E6%B5%8B%E8%AF%95"><span class="nav-number">9.</span> <span class="nav-text">七 测试</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AB-%E6%90%AD%E5%BB%BAmoses-server"><span class="nav-number">10.</span> <span class="nav-text">八 搭建moses server</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
