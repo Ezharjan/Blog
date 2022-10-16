@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="./images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="./images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="./images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="./images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="./css/main.css">
+
+
+<link rel="stylesheet" href="./lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"ezharjan.github.io","root":"./","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Moses系统简介 摩西是统计（或称基于数据的）机器翻译（MT）的一个实现方法。这是该领域目前的主要方法，并被谷歌和微软等公司部署的在线翻译系统所采用。在统计机器翻译（SMT）中，翻译系统接受大量并行数据的训练（系统从中学习如何翻译小段），以及更大量的单语数据（系统从中学习目标语言应该怎么组织）。平行数据是两种不同语言的句子集合，它们是句子对齐的，因为一种语言的每个句子都与另一种语言中相应的翻译句">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MOSES入门">
+<meta property="og:url" content="https://ezharjan.github.io/Blog/2022/10/16/MOSES%E5%85%A5%E9%97%A8/index.html">
+<meta property="og:site_name">
+<meta property="og:description" content="Moses系统简介 摩西是统计（或称基于数据的）机器翻译（MT）的一个实现方法。这是该领域目前的主要方法，并被谷歌和微软等公司部署的在线翻译系统所采用。在统计机器翻译（SMT）中，翻译系统接受大量并行数据的训练（系统从中学习如何翻译小段），以及更大量的单语数据（系统从中学习目标语言应该怎么组织）。平行数据是两种不同语言的句子集合，它们是句子对齐的，因为一种语言的每个句子都与另一种语言中相应的翻译句">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2022-10-16T14:08:48.000Z">
+<meta property="article:modified_time" content="2022-10-16T14:41:27.419Z">
+<meta property="article:author" content="Alexander Ezharjan">
+<meta property="article:tag" content="Machine Translation">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://ezharjan.github.io/Blog/2022/10/16/MOSES%E5%85%A5%E9%97%A8/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>MOSES入门 | </title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="./" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title"></h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">Blog By Alexander</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="./" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="./archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ezharjan.github.io/Blog/2022/10/16/MOSES%E5%85%A5%E9%97%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="./images/avatar.gif">
+      <meta itemprop="name" content="Alexander Ezharjan">
+      <meta itemprop="description" content="This blog is maintained by Alexander Ezharjan, in order to record some useful things in life.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MOSES入门
+        </h1>
+
+        <div class="post-meta">
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2022-10-16 22:08:48 / Modified: 22:41:27" itemprop="dateCreated datePublished" datetime="2022-10-16T22:08:48+08:00">2022-10-16</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="./categories/Notes/" itemprop="url" rel="index"><span itemprop="name">Notes</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="Moses系统简介"><a href="#Moses系统简介" class="headerlink" title="Moses系统简介"></a>Moses系统简介</h1><hr>
+<p>摩西是统计（或称基于数据的）机器翻译（MT）的一个实现方法。这是该领域目前的主要方法，并被谷歌和微软等公司部署的在线翻译系统所采用。在统计机器翻译（SMT）中，翻译系统接受大量并行数据的训练（系统从中学习如何翻译小段），以及更大量的单语数据（系统从中学习目标语言应该怎么组织）。平行数据是两种不同语言的句子集合，它们是句子对齐的，因为一种语言的每个句子都与另一种语言中相应的翻译句子相匹配，它也被称为bitext。</p>
+<p>摩西的训练过程接收平行数据，并使用单词和语言片段（即为短语）的同时出现来推断两种语言之间的对应关系。在基于短语的机器翻译中，这些对应关系仅在连续的单词序列之间，而在基于分层短语的机器翻译或基于语法的翻译中，更多关于句子的结构被添加到对应关系中。例如，一个分层的机器翻译系统可以知道德国hat<br>X gegessen 对应于英语中的ate<br>X，其中Xs能被任何德语-英语单词对所替换。在这些类型的系统中使用的额外结构可能或并不能从并行语料的语言分析得到。摩西还实现了基于短语的机器翻译的扩展，称为因式翻译，可以将额外的语言信息添加到基于短语的翻译系统中。</p>
+<p>有关摩西翻译模型的更多信息，请参见摩西网站上关于<a target="_blank" rel="noopener" href="http://www.statmt.org/moses/?n=Moses.Tutorial">基于短语的机器翻译系统</a>，基于<a target="_blank" rel="noopener" href="http://www.statmt.org/moses/?n=Moses.SyntaxTutorial">句法的翻译系统</a>或基于因子的翻译系统。</p>
+<p>无论您使用哪种类型的机器翻译模型，创建一个表现良好的翻译系统的关键都是大量优质数据（语料）。您可以使用许多<a target="_blank" rel="noopener" href="http://www.statmt.org/moses/?n=Moses.LinksToCorpora">免费的并行数据源</a>来训练样本系统，比如：<a target="_blank" rel="noopener" href="http://www.statmt.org/moses/?n=Moses.LinksToCorpora">http://www.statmt.org/moses/?n=Moses.LinksToCorpora</a>。但（通常）您使用的数据越接近您要翻译的语言类型，得到的结果就越好。这是使用像Moses这样的开源工具的优势之一，如果您拥有自己的数据，那么您可以根据需要定制自己的翻译系统，并且可能比通用翻译系统获得更好的性能。摩西用来训练翻译系统的过程中需要句子对齐的数据，但如果语料在文档级别对齐，则通常可以使用像<a target="_blank" rel="noopener" href="http://mokk.bme.hu/resources/hunalign/">hunalign</a>这样的工具将其转换为句子对齐的数据。</p>
+<h2 id="Moses系统的组成部分"><a href="#Moses系统的组成部分" class="headerlink" title="Moses系统的组成部分"></a><strong>Moses系统的组成部分</strong></h2><p>摩西系统的两个主要组成部分是训练管道和解码器。还有各种开源社区贡献的工具和实用程序。训练管道实际上是一组工具（主要用perl编写，有些用C<br>++编写），它们采用原始数据（并行语料和单语言）并将其转换为机器翻译模型。解码器是一个单独的C<br>++应用程序，给定一个训练有素的机器翻译模型和源句子，将源语句翻译成目标语言。</p>
+<p>1.培训管道：</p>
+<p>从培训数据生成翻译系统涉及各个阶段，这些阶段在培训文档和基线系统指南中有更详细的描述。这些作为管道被完成，并且可由摩西实验管理系统所控制，而Moses通常可以轻松地将不同类型的外部工具插入到培训管道中</p>
+<p>数据在被用于训练之前需要做一些准备工作，标记文本并且将标记转换为标准案例。启发式用于删除看起来未对齐的句子对，并删除长句子。然后，并行的句子需要词对齐，通常使用<br>GIZA<br>++来完成，它实现了80年代在IBM开发的一组统计模型。这些词对齐被用于根据需要提取短语-短语翻译或分层规则，并且使用这些规则的语料库范围统计来估计概率。</p>
+<p>翻译系统的一个重要部分是语言模型，一种使用目标语言中的单语言数据构建的统计模型，并由解码器用来尝试确保输出的流畅性。摩西依靠<a target="_blank" rel="noopener" href="http://www.statmt.org/moses/?n=FactoredTraining.BuildingLanguageModel">外部工具</a>（<a target="_blank" rel="noopener" href="http://www.statmt.org/moses/?n=FactoredTraining.BuildingLanguageModel%EF%BC%89%E8%BF%9B%E8%A1%8C%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E6%9E%84%E5%BB%BA%E3%80%82">http://www.statmt.org/moses/?n=FactoredTraining.BuildingLanguageModel）进行语言模型构建。</a></p>
+<p>创建机器翻译系统的最后一步是<em>调优</em>，其中不同的统计模型相互加权以产生最佳可能的翻译。摩西系统包含了最流行的调优算法的实现。</p>
+<p>2.解码器</p>
+<p>摩西解码器的工作是找到与给定源句子相对应的目标语言（根据翻译模型）的最高评分句子。解码器还可以输出候选的翻译的从好到坏的排序列表，并且还提供关于其如何做出决策的各种类型的信息（例如，它使用的短语-短语对应关系）。</p>
+<p>解码器以模块化方式编写，并允许用户以各种方式改变解码过程，例如：</p>
+<ul>
+<li><p>输入：这可以是一个简单的句子，或者它可以用类似xml的元素的注释来指导翻译过程，或者它可以是更复杂的结构，如格子或混淆网络（例如，从语音识别的输出）</p>
+</li>
+<li><p>翻译模型：这可以使用短语-短语规则或分层（也可能是句法）规则。它可以编译成二进制形式，以加快加载速度。它可以通过将额外的信息添加到翻译过程中来补充一些特性，例如阐明短语对的来源以控制他们的可靠性的特性。</p>
+</li>
+<li><p>解码算法：解码问题是一个巨型的搜索问题，通常对于精确搜索来说太大了，而且Moses为这种搜索实现了几种不同的策略，例如基于堆栈，立方体修剪，图表解析等。</p>
+</li>
+<li><p>语言模型：<br>Moses支持几种不同的语言模型工具包（SRILM，KenLM，IRSTLM，RandLM），每种工具包都有自己的优点和缺点，添加一个新的LM工具包很简单。</p>
+</li>
+</ul>
+<p>Moses解码器还支持多线程解码（因为翻译具有<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Embarrassingly_parallel">很高的的并行性</a>），并且如果您有权访问群集服务器，摩西提供启用多进程解码的脚本。</p>
+<h2 id="贡献工具"><a href="#贡献工具" class="headerlink" title="贡献工具"></a>贡献工具</h2><p>摩西有许多贡献工具，它们提供额外的功能和超越标准训练和解码管道的附加功能。这些包括：</p>
+<ul>
+<li><p>Moses服务器：为解码器提供xml-rpc接口，需要安装xmlrpc-c。</p>
+</li>
+<li><p>Web翻译：一组脚本，使Moses可用于翻译网页</p>
+</li>
+<li><p>分析工具：与参考文献相比，是一个可以对摩西输出进行分析和可视化的脚本。</p>
+</li>
+</ul>
+<p>还有用于评估翻译的工具，替代短语评分方法，用于加权短语表的技术的实现，用于减小短语表的规模的工具以及其他贡献工具。</p>
+<h2 id="一-安装相关依赖项："><a href="#一-安装相关依赖项：" class="headerlink" title="一 安装相关依赖项："></a>一 安装相关依赖项：</h2><p>在本教程中，我用来搭建Moses系统的服务器环境如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">root\@VM-0-15-ubuntu:/home/ubuntu/mosesdecoder\<span class="comment"># lsb_release -a</span></span><br><span class="line"></span><br><span class="line">No LSB modules are available.</span><br><span class="line"></span><br><span class="line">Distributor ID: Ubuntu</span><br><span class="line"></span><br><span class="line">Description: Ubuntu 16.04.4 LTS</span><br><span class="line"></span><br><span class="line">Release: 16.04</span><br><span class="line"></span><br><span class="line">Codename: xenial</span><br></pre></td></tr></table></figure>
+
+<p>安装如下依赖：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install build-essential git-core pkg-config automake libtool wget</span><br><span class="line">zlib1g-dev python-dev libbz2-dev</span><br></pre></td></tr></table></figure>
+<p>从Github克隆Moses：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> &lt;https://github.com/moses-smt/mosesdecoder.git&gt;</span><br><span class="line"><span class="built_in">cd</span> mosesdecoder</span><br></pre></td></tr></table></figure>
+
+<p>运行以下命令安装最新的boost库，cmph (for<br>CompactPT，即C Minimal Perfect Hashing Library), irstlm (language model from<br>FBK, required to pass the regression tests),和 xmlrpc-c (for moses<br>server)。这些都会默认安装在你的当前工作目录的.&#x2F;opt路径。其中xmlrpc不是必须，但是如果将moses作为服务提供必须安装xmlrpc。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make -f contrib/Makefiles/install-dependencies.gmake</span><br></pre></td></tr></table></figure>
+
+<p>编译Moses：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">./compile.sh [additional options]</span><br><span class="line"></span><br><span class="line">\--prefix=/destination/path --install-scripts 安装到其他目录</span><br><span class="line"></span><br><span class="line">\--with-mm 使用基于后缀数组的短语表</span><br></pre></td></tr></table></figure>
+
+<p>其中，MOSES<br>SERVER使你可以把MOSES解码器作为一个服务器进程来运行，发送给其的句子将通过XMLRPC来翻译。这意味着无论客户使用java,python,perl,php还是其它别的XMLRPC集合里有的语言来编码，MOSES进程都可以服务客户且分布式地服务客户。</p>
+<p>XMLRPC是Userland<br>Software公司设计的一种格式：是一种使用HTTP协议传输XML格式文件来获取远程程序调用（Remote<br>Procedure<br>Call）的传输方式。远程程序调用简单地讲是指，一台机器通过网络调用另一台机器里的应用程序，同时将执行结果返回。一般一台机器作为服务器端，另一台作为客户端。服务器端需要轮询是否有客户端进行RPC请求。一个简单的例子。一台服务器提供查询当前时间的RPC服务。其他任何一台机器通过网络，使用客户端，都可以到该服务器查询当前的时间。</p>
+<p>MLRPC是RPC机制的实现方式之一。采用XML语言作为服务器与客户端的数据交互格式，方便使用者阅读。XMLRPC可以用很多种语言实现，包括perl，phyon，c等。使用c与c++实现的库，就是XMLRPC-c。</p>
+<p>Boost<br>1.48版本在编译Moses时会出现一个严重的bug。在有些Linux的分发版本中，比如Ubuntu<br>12.04，Boost库存在着这种版本的Boost库。在这种情况下，你必须要手动下载和编译Boost。</p>
+<p>下载编译boost：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">wget &lt;https://dl.bintray.com/boostorg/release/1.64.0/source/boost_1_64_0.tar.gz&gt;</span><br><span class="line"></span><br><span class="line">tar zxvf boost_1_64_0.tar.gz</span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> boost_1_64_0/</span><br><span class="line"></span><br><span class="line">./bootstrap.sh</span><br><span class="line"></span><br><span class="line">./b2 -j4 --prefix=\<span class="variable">$PWD</span> --libdir=\<span class="variable">$PWD</span>/lib64 --layout=system <span class="built_in">link</span>=static install</span><br><span class="line">\|\| <span class="built_in">echo</span> FAILURE \<span class="comment">#或者执行./b2安装在当前目录下</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>上述命令在文件夹lib64中创建文件夹，并不是在系统目录下。因此，你不必使用系统root权限来执行上述命令。然而，你需要告诉Moses如何找到boost。当boost被暗账好以后，你可以开始编译Moses，你需要用 –with-boost标记告诉Moses系统<br>boost安装在哪里。</p>
+<p>下载安装cmph:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">wget</span><br><span class="line">http://www.mirrorservice.org/sites/download.sourceforge.net/pub/sourceforge/c/cm/cmph/cmph/cmph-2.0.tar.gz</span><br><span class="line"></span><br><span class="line">tar zxvf cmph-2.0.tar.gz</span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> <span class="built_in">cd</span> cmph-2.0/</span><br><span class="line"></span><br><span class="line">./configure --prefix= /usr/local/cmph</span><br><span class="line">\<span class="comment">#指定安装路径，这里我选择了/usr/local/cmph</span></span><br><span class="line"></span><br><span class="line">Make</span><br><span class="line"></span><br><span class="line">Make install</span><br></pre></td></tr></table></figure>
+
+<p>下载安装xmlrpc-c：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">wget</span><br><span class="line">https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/xmlrpc-c/1.33.14-8build1/xmlrpc-c_1.33.14.orig.tar.gz</span><br><span class="line"></span><br><span class="line">tar zxvf xmlrpc-c_1.33.14.orig.tar.gz</span><br><span class="line"></span><br><span class="line">cd xmlrpc-c-1.33.14/</span><br><span class="line"></span><br><span class="line">./configure --prefix= /usr/local/xmlrpc-c</span><br><span class="line">\#指定安装路径，这里我选择了/usr/local/xmlrpc-c</span><br><span class="line"></span><br><span class="line">Make</span><br><span class="line"></span><br><span class="line">Make install</span><br></pre></td></tr></table></figure>
+
+<p>接下来，用bjam编译Moses：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">./bjam --with-boost=/home/ubuntu/boost_1_64_0 --with-cmph=/usr/local/cmph</span><br><span class="line">--with-xmlrpc-c=/usr/local/xmlrpc-c -j4</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>注意： –with-boost<br>后的路径为你自己安装时指定的路径，-j4 用于指定核心数。Moses可选的语言模型有IRSTLM，SRILM，KenLM.其中，KenLM已经默认包含在Moses工具包中。我们在这里使用Moses自带的语言模型工具KenLM，不再安装irstlm。</p>
+<h2 id="二-安装词对齐工具GIZA"><a href="#二-安装词对齐工具GIZA" class="headerlink" title="二 安装词对齐工具GIZA++"></a>二 安装词对齐工具GIZA++</h2><p>接下来，安装词对齐工具GIZA++：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">git <span class="built_in">clone</span> &lt;https://github.com/moses-smt/giza-pp.git&gt;</span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> giza-pp</span><br><span class="line"></span><br><span class="line">make</span><br></pre></td></tr></table></figure>
+
+<p>编译完成后，将生成三个二进制文件：</p>
+<p>· giza-pp&#x2F;GIZA++-v2&#x2F;GIZA++</p>
+<p>· giza-pp&#x2F;GIZA++-v2&#x2F;snt2cooc.out</p>
+<p>· giza-pp&#x2F;mkcls-v2&#x2F;mkcls</p>
+<p>记得在编译完之后将上面的三个文件拷到一个目录下，便于访问使用。如下面的命令所示，我是直接将其放在tools文件夹下的。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">cd \~/mosesdecoder</span><br><span class="line"></span><br><span class="line">mkdir tools</span><br><span class="line"></span><br><span class="line">cp \~/giza-pp/GIZA++-v2/GIZA++ \~/giza-pp/GIZA++-v2/snt2cooc.out \\</span><br><span class="line"></span><br><span class="line">\~/giza-pp/mkcls-v2/mkcls tools</span><br></pre></td></tr></table></figure>
+
+<p>编译创建好GIZA++后，有两种方式来使用它，一是在编译Moses时将GIZA++的地址作为选项参数。如果在编译Moses时没有指定GIZA++的地址，可以采用另外一个方法，那就是在训练语言模型时指明GIZA++三个可执行文件的路径，例如：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">train-model.perl -external-bin-dir \<span class="variable">$HOME</span>/external-bin-dir</span><br><span class="line"></span><br><span class="line">我在实际操作中，采用的是第二种方法，即在使用Moses时，给一个参数指明GIZA++路径。</span><br></pre></td></tr></table></figure>
+
+<h2 id="三-语料准备"><a href="#三-语料准备" class="headerlink" title="三 语料准备"></a>三 语料准备</h2><p>接下来，准备平行语料：</p>
+<p>我的英汉平行语料来自联合国的网站提供的英汉平行语料，（<a target="_blank" rel="noopener" href="https://conferences.unite.un.org/uncorpus/zh%EF%BC%89%EF%BC%8C%E5%A4%A7%E7%BA%A61600%E4%B8%87%E5%AF%B9%E3%80%82%E5%9B%A0%E6%88%91%E4%BD%BF%E7%94%A8%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%86%85%E5%AD%98%E5%8F%AA%E6%9C%894G%EF%BC%8C%E6%89%80%E4%BB%A5%E5%B0%86%E5%8E%9F%E6%96%87%E4%BB%B6%E5%88%86%E6%88%9030%E4%BB%BD%EF%BC%8C%E4%BB%8E%E4%B8%AD%E6%88%AA%E5%8F%96%E4%BA%86%E7%BA%A660%E4%B8%87%E5%AF%B9%E7%94%A8%E6%9D%A5%E5%81%9A%E6%AD%A4%E6%AC%A1%E5%AE%9E%E9%AA%8C%E3%80%82">https://conferences.unite.un.org/uncorpus/zh），大约1600万对。因我使用的服务器内存只有4G，所以将原文件分成30份，从中截取了约60万对用来做此次实验。</a></p>
+<p>我们的英文语料为：un_en-zh23.en，汉语语料为：un_en-zh23.cn。</p>
+<p>在准备训练翻译系统之前，我们需要对语料做如下的处理：</p>
+<ol>
+<li><strong>tokenisation：</strong>这一步主要是在单词和单词之间或者单词和标点之间插入空白，以便于后续识别和其他操作。</li>
+</ol>
+<p>对于英文语料，我们运行如下命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">\~/mosesdecoder/scripts/tokenizer/tokenizer.perl -l en \\</span><br><span class="line"></span><br><span class="line">\&lt; \~/corpus/training/un_en-zh23.en \\</span><br><span class="line"></span><br><span class="line">\&gt; \~/corpus/un_en-zh23.tok.en</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>  注：命令当中的~为Mosesdecoder的安装路径和语料所在的具体路径，下同</p>
+</blockquote>
+<p>对于汉语语料。我们需要进行分词。在这里，我们使用清华大学自然语言处理与社会人文计算实验室研制推出的中文词法分析工具包（<a href="http://thulac.thunlp.org），具有中文分词和词性标注功能。具有能力强，准确率高，速度快的特点。具体使用方法请参照网页。在这里，我们使用Python版本来对中文语料进行分词，具体代码如下：">http://thulac.thunlp.org），具有中文分词和词性标注功能。具有能力强，准确率高，速度快的特点。具体使用方法请参照网页。在这里，我们使用Python版本来对中文语料进行分词，具体代码如下：</a></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">import</span> thulac</span><br><span class="line"></span><br><span class="line">thu1=thulac.thulac(user_dict=<span class="string">&quot;/home/ubuntu/corpus/un_en-zh_23/dict.txt&quot;</span>,seg_only=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">\<span class="comment">#只进行分词，不进行词性标注</span></span><br><span class="line"></span><br><span class="line">thu1.cut_f(<span class="string">&quot;/home/ubuntu/corpus/un_en-zh_23/un_en-zh23.cn&quot;</span>,</span><br><span class="line"><span class="string">&quot;/home/ubuntu/corpus/un_en-zh_23/un_en-zh23.fc&quot;</span>)</span><br><span class="line">\<span class="comment">#对un_en-zh23.cn文件内容进行分词，输出到un_en-zh23.fc</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>  经过tokenisation，我们得到un_en-zh23.fc和un_en-zh23.tok.en两个文件。</p>
+</blockquote>
+<ol>
+<li>truecase：初始每句话的字和词组都被转换为没有格式的形式(例如统一为小写）。这有助于减少数据稀疏性问题。</li>
+</ol>
+<blockquote>
+<p>  Truecase首先需要训练，以便提取关于文本的一些统计信息</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">\~/mosesdecoder/scripts/recaser/train-truecaser.perl \\</span><br><span class="line"></span><br><span class="line">\--model \~/corpus/truecase-model.en --corpus \\</span><br><span class="line"></span><br><span class="line">\~/corpus/ un_en-zh23.tok.en</span><br><span class="line"></span><br><span class="line">\~/mosesdecoder/scripts/recaser/train-truecaser.perl \\</span><br><span class="line"></span><br><span class="line">\--model \~/corpus/truecase-model.cn --corpus \\</span><br><span class="line"></span><br><span class="line">\~/corpus/ un_en-zh23.fc</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>  经过此步，我们得到truecase-model.en和truecase-model.cn两个文件。</p>
+</blockquote>
+<blockquote>
+<p>  接下来，我们对tokenisation后的文件进行truecase：</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">\~/mosesdecoder/scripts/recaser/truecase.perl \\</span><br><span class="line"></span><br><span class="line">\--model \~/corpus/truecase-model.en \\</span><br><span class="line"></span><br><span class="line">\&lt; \~/corpus/ un_en-zh23.tok.en \\</span><br><span class="line"></span><br><span class="line">\&gt; \~/corpus/ un_en-zh23.true.en</span><br><span class="line"></span><br><span class="line">\~/mosesdecoder/scripts/recaser/truecase.perl \\</span><br><span class="line"></span><br><span class="line">\--model \~/corpus/truecase-model.cn \\</span><br><span class="line"></span><br><span class="line">\&lt; \~/corpus/ un_en-zh23.fc \\</span><br><span class="line"></span><br><span class="line">\&gt; \~/corpus/un_en-zh23.true.cn</span><br></pre></td></tr></table></figure>
+
+<p>经过truecase，我们得到un_en-zh23.true.cn和un_en-zh23.true.en两个文件。</p>
+<ol start="3">
+<li>cleaning：长句和空语句可引起训练过程中的问题，因此将其删除，同时删除明显不对齐的句子。<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">\~/mosesdecoder/scripts/training/clean-corpus-n.perl \\</span><br><span class="line"></span><br><span class="line">\~/corpus/ un_en-zh23.true cn en \\</span><br><span class="line"></span><br><span class="line">\~/corpus/ un_en-zh23.clean 1 80</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+需要注意的是，这句命令会对truecase-model.en和truecase-model.cn两个文件同时进行清洗。经过clean，我们得到un_en-zh23.clean.en和un_en-zh23.clean.cn两个文件。</li>
+</ol>
+<h2 id="四-语言模型训练（Language-Model-Training）"><a href="#四-语言模型训练（Language-Model-Training）" class="headerlink" title="四 语言模型训练（Language Model Training）"></a>四 语言模型训练（Language Model Training）</h2><p>语言模型的训练是为了保证能够产生流利的输出，所以要用目标语言来建立。本例的目标语言是汉语。在这里，我们使用Moses系统中内置的语言语言模型工具KenLM，当然，你也可以使用其他一些开源的语言模型工具，比如，IRSTLM，BerkeleyLM，SRILM等。接下来，我们建立一个合适的3元文语言模型。</p>
+<p>建立文件夹lm，然后运行如下命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="built_in">mkdir</span> \~/lm</span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> \~/lm</span><br><span class="line"></span><br><span class="line">\~/mosesdecoder/bin/lmplz -o 3 \&lt;\~/corpus/ un_en-zh23.true.cn \&gt;</span><br><span class="line">un_en-zh23.arpa.cn</span><br></pre></td></tr></table></figure>
+
+<p>你会看到建立语言模型的五个步骤：</p>
+<p>1&#x2F;5 Counting and sorting n-grams</p>
+<p>2&#x2F;5 Calculating and sorting adjusted counts</p>
+<p>3&#x2F;5 Calculating and sorting initial probabilities</p>
+<p>4&#x2F;5 Calculating and writing order- interpolated probabilities</p>
+<p>5&#x2F;5 Writing ARPA model &#x3D;FE Name</p>
+<p>此步我们生成un_en-zh23.arpa.cn<br>文件，接下来我们为了加载的更快一些，我们使用KenLm来对*.arpa.en文件二进制化。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">\~/mosesdecoder/bin/build_binary \\</span><br><span class="line"></span><br><span class="line">un_en-zh23.arpa.cn \\</span><br><span class="line"></span><br><span class="line">un_en-zh23.blm.cn</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>当你看到绿色的SUCCESS字样时说明二进制化已经成功了。我们可以在这一步之后通过查询测试来判断训练的模型是否正确，运行如下的linux命令你会看到：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">\$ <span class="built_in">echo</span> <span class="string">&quot;我 爱 我的 好姑娘&quot;</span> \\</span><br><span class="line"></span><br><span class="line">\| \~/mosesdecoder/bin/query un_en-zh23.blm.cn</span><br><span class="line"></span><br><span class="line">Loading statistics:</span><br><span class="line"></span><br><span class="line">我=8872 2 -2.282969 爱=18074 1 -6.466906 我的=9416 1 -4.8714185</span><br><span class="line"></span><br><span class="line">好姑娘=0 1 -6.4878592 \&lt;/s\&gt;=2 1 -2.288369 Total: -22.397522 OOV: 1</span><br><span class="line"></span><br><span class="line">Perplexity including OOVs: 30165.07396388977</span><br><span class="line"></span><br><span class="line">Perplexity excluding OOVs: 9493.266676976866</span><br><span class="line"></span><br><span class="line">OOVs: 1</span><br><span class="line"></span><br><span class="line">Tokens: 5</span><br><span class="line"></span><br><span class="line">Name:query VmPeak:151680 kB VmRSS:4088 kB RSSMax:136452 kB</span><br><span class="line"></span><br><span class="line">user:0.008 sys:0 CPU:0.008 real:0.00995472</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="五-训练翻译模型（Training-the-Translation-System）"><a href="#五-训练翻译模型（Training-the-Translation-System）" class="headerlink" title="五 训练翻译模型（Training the Translation System）"></a>五 训练翻译模型（Training the Translation System）</h2><p>接下来，我们进行到最主要的一步，训练翻译模型。在这一步，我们进行词对齐（用GIZA++），短语抽取，打分，创建词汇化重新排序表，并且创建属于我们自己的摩西配置文件(moses.ini)。我们运行如下的命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="built_in">mkdir</span> \~/working</span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> \~/working</span><br><span class="line"></span><br><span class="line"><span class="built_in">nohup</span> <span class="built_in">nice</span> \~/mosesdecoder/scripts/training/train-model.perl -root-dir train \\</span><br><span class="line"></span><br><span class="line">\-corpus \~/corpus/ un_en-zh23.clean \\</span><br><span class="line"></span><br><span class="line">\-f en -e cn -alignment grow-diag-final-and -reordering msd-bidirectional-fe \\</span><br><span class="line"></span><br><span class="line">\-lm 0:3:\<span class="variable">$HOME</span>/lm/un_en-zh23.blm.cn:8 \\</span><br><span class="line"></span><br><span class="line">\-external-bin-dir \~/mosesdecoder/tools \&gt;&amp; training.out &amp;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>如果你的CPU是多核的，建议你加上-cores<br>参数来加快词对齐的过程。注意，如果在训练翻译系统的过程中遇到了 Exit<br>code:137错误，一般是因为内存不足，需要增大服务器的内存配置。上述过程完成后，你可以在~&#x2F;working&#x2F;train&#x2F;model<br>文件夹下找到一个moses.ini配置文件，这是需要在moses解码时使用到的。但这里有几个问题，首先是它的加载速度很慢，这个问题我们可以通过二值化(binarising)短语表和短语重排序表来解决，即编译成一个可以很快地加载的格式。第二个问题是，该配置文件中moses解码系统用来权衡不同的模型之间重要程度的权重信息都是刚初始化的，即非最优的，如果你用VIM打开moses.ini文件看看的话，你会看到各种权重都被设置为默认值，如0.2，0.3等。要寻找更好的权重，我们需要调整(tuning)翻译系统，即下一步。</p>
+<h2 id="六-调优-Tuning"><a href="#六-调优-Tuning" class="headerlink" title="六 调优(Tuning)"></a>六 调优(Tuning)</h2><p>这是整个过程中最慢的一步，Tuning需要一小部分的平行语料，与训练数据相分离开。这里，我们再次从联合国的平行语料中截取一部分。我们用来调优的语料文件名称为un_dev.cn和un_dev.en。我们将用这两个文件来完成调优的过程，所以我们在之前必须对着两个文件进行  tokenise<br>和 truecase。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">cd \~/corpus</span><br><span class="line"></span><br><span class="line">\~/mosesdecoder/scripts/tokenizer/tokenizer.perl -l en \\</span><br><span class="line"></span><br><span class="line">\&lt; dev/un_dev.en \&gt; un_dev.tok.en</span><br></pre></td></tr></table></figure>
+
+<p>同样的，对un_dev.cn进行中文分词，得到un_dev.fc。</p>
+<p>然后进行truecase：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">\~/mosesdecoder/scripts/recaser/truecase.perl --model truecase-model.en \\</span><br><span class="line"></span><br><span class="line">\&lt; un_dev.tok.en \&gt; un_dev.true.en</span><br><span class="line"></span><br><span class="line">\~/mosesdecoder/scripts/recaser/truecase.perl --model truecase-model.fr \\</span><br><span class="line"></span><br><span class="line">\&lt; un_dev.fc \&gt; un_dev.true.cn</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>然后回到我们用来训练的目录，开始调优的过程：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">cd \~/working</span><br><span class="line"></span><br><span class="line">nohup nice \~/mosesdecoder/scripts/training/mert-moses.pl \\</span><br><span class="line"></span><br><span class="line">\~/corpus/ un_dev.true.en \~/corpus/ un_dev.true.cn \\</span><br><span class="line"></span><br><span class="line">\~/mosesdecoder/bin/moses train/model/moses.ini --mertdir \~/mosesdecoder/bin/</span><br><span class="line">\\</span><br><span class="line"></span><br><span class="line">&amp;\&gt; mert.out &amp;</span><br></pre></td></tr></table></figure>
+
+<p>如果你的CPU是多核的，那么用多线程来运行摩西会明显加快速度。在上面的最后一行加上–decoder-flags&#x3D;”-threads<br>4”可以用四线程来运行解码器。</p>
+<p>最后的调优结果是一个包含训练权重的ini文件，如果你用的跟我一样的目录结构的话，应该存在于~&#x2F;working&#x2F;mert-<br>work&#x2F;moses.ini文件夹中。</p>
+<h2 id="七-测试"><a href="#七-测试" class="headerlink" title="七 测试"></a>七 测试</h2><p>接下来你可以运行下面的命令来翻译句子：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">\~/mosesdecoder/bin/moses -f \~/working/mert-work/moses.ini</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>运行命令后，会得到下面的提示：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">Defined parameters (per moses.ini or switch):</span><br><span class="line"></span><br><span class="line">config: /home/ubuntu/corpus/un_en-zh_23/working/mert-work/moses.ini</span><br><span class="line"></span><br><span class="line">distortion-limit: 6</span><br><span class="line"></span><br><span class="line">feature: UnknownWordPenalty WordPenalty PhrasePenalty PhraseDictionaryMemory</span><br><span class="line">name=TranslationMode l0 num-features=4</span><br><span class="line">path=/home/ubuntu/corpus/un_en-zh_23/working/train/model/phrase-table.gz</span><br><span class="line">input-factor=0 output-factor=0 LexicalReordering name=LexicalReordering0</span><br><span class="line">num-features=6 <span class="built_in">type</span>=wbe-msd-bidirectional-fe-a llff input-factor=0</span><br><span class="line">output-factor=0</span><br><span class="line">path=/home/ubuntu/corpus/un_enzh_23/working/train/model/reordering-t</span><br><span class="line">able.wbe-msd-bidirectional-fe.gz Distortion KENLM name=LM0 <span class="built_in">factor</span>=0</span><br><span class="line">path=/home/ubuntu/corpus/un_en-zh_23/ lm/un_en-zh23.blm.cn order=3</span><br><span class="line"></span><br><span class="line">input-factors: 0</span><br><span class="line"></span><br><span class="line">mapping: 0 T 0</span><br><span class="line"></span><br><span class="line">weight: LexicalReordering0= 0.0614344 0.0245557 0.242242 0.0725016 0.0539617</span><br><span class="line">0.0566553 Distortion 0= 0.00534453 LM0= 0.0696027 WordPenalty0= -0.166007</span><br><span class="line">PhrasePenalty0= 0.0688629 TranslationModel0= 0.03900 17 0.0457273 0.0730895</span><br><span class="line">0.0210141 UnknownWordPenalty0= 1</span><br><span class="line"></span><br><span class="line">line=UnknownWordPenalty</span><br><span class="line"></span><br><span class="line">FeatureFunction: UnknownWordPenalty0 start: 0 end: 0</span><br><span class="line"></span><br><span class="line">line=WordPenalty</span><br><span class="line"></span><br><span class="line">FeatureFunction: WordPenalty0 start: 1 end: 1</span><br><span class="line"></span><br><span class="line">line=PhrasePenalty</span><br><span class="line"></span><br><span class="line">FeatureFunction: PhrasePenalty0 start: 2 end: 2</span><br><span class="line"></span><br><span class="line">line=PhraseDictionaryMemory name=TranslationModel0 num-features=4</span><br><span class="line">path=/home/ubuntu/corpus/un_en-zh_23/wo rking/train/model/phrase-table.gz</span><br><span class="line">input-factor=0 output-factor=0</span><br><span class="line"></span><br><span class="line">FeatureFunction: TranslationModel0 start: 3 end: 6</span><br><span class="line"></span><br><span class="line">line=LexicalReordering name=LexicalReordering0 num-features=6</span><br><span class="line"><span class="built_in">type</span>=wbe-msd-bidirectional-fe-allff input-f actor=0 output-factor=0</span><br><span class="line">path=/home/ubuntu/corpus/un_en-zh_23/working/train/model/reordering-table.wbe-msd</span><br><span class="line">-bidirectional-fe.gz</span><br><span class="line"></span><br><span class="line">Initializing Lexical Reordering Feature..</span><br><span class="line"></span><br><span class="line">FeatureFunction: LexicalReordering0 start: 7 end: 12</span><br><span class="line"></span><br><span class="line">line=Distortion</span><br><span class="line"></span><br><span class="line">FeatureFunction: Distortion0 start: 13 end: 13</span><br><span class="line"></span><br><span class="line">line=KENLM name=LM0 <span class="built_in">factor</span>=0</span><br><span class="line">path=/home/ubuntu/corpus/un_en-zh_23/lm/un_en-zh23.blm.cn order=3</span><br><span class="line"></span><br><span class="line">FeatureFunction: LM0 start: 14 end: 14</span><br><span class="line"></span><br><span class="line">Loading UnknownWordPenalty0</span><br><span class="line"></span><br><span class="line">Loading WordPenalty0</span><br><span class="line"></span><br><span class="line">Loading PhrasePenalty0</span><br><span class="line"></span><br><span class="line">Loading LexicalReordering0</span><br><span class="line"></span><br><span class="line">Loading table into memory...done.</span><br><span class="line"></span><br><span class="line">Loading Distortion0</span><br><span class="line"></span><br><span class="line">Loading LM0</span><br><span class="line"></span><br><span class="line">Loading TranslationModel0</span><br><span class="line"></span><br><span class="line">Start loading text phrase table. Moses format : [133.871] seconds</span><br><span class="line"></span><br><span class="line">Reading /home/ubuntu/corpus/un_en-zh_23/working/train/model/phrase-table.gz</span><br><span class="line"></span><br><span class="line">\----5---10---15---20---25---30---35---40---45---50---55---60---65---70---75---80---85---90---95--100</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>输入你喜欢的英语句子，然后查看结果。你会注意到，解码器会话费很长一段时间来启动。如上所示，我们此次启动花费了133.871秒，并且CPU和内存一直处于满载状态。为了让解码器启动的更快一些，我们可以将短语表和词汇化再排序模型二进制化。注意，binarise操作需要使用cmph，如果没有按照本文档事先安装cmph，在此时才安装cmph，那么必须进入mosesdecoder安装文件夹重新执行.&#x2F;bjam，并补全编译参数重新编译moses。否则执行moses.ini时会报错。</p>
+<p>我们要创建一个合适的目录并且按如下的命令来二进制化模型：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="built_in">mkdir</span> \~/working/binarised-model</span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> \~/working</span><br><span class="line"></span><br><span class="line">\~/mosesdecoder/bin/processPhraseTableMin \\</span><br><span class="line"></span><br><span class="line">\-<span class="keyword">in</span> train/model/phrase-table.gz -nscores 4 \\</span><br><span class="line"></span><br><span class="line">\-out binarised-model/phrase-table</span><br><span class="line"></span><br><span class="line">\~/mosesdecoder/bin/processLexicalTableMin \\</span><br><span class="line"></span><br><span class="line">\-<span class="keyword">in</span> train/model/reordering-table.wbe-msd-bidirectional-fe.gz \\</span><br><span class="line"></span><br><span class="line">\-out binarised-model/reordering-table</span><br></pre></td></tr></table></figure>
+
+<p>输入命令，你会看到如下的信息，分别是将短语表和重排序表二值化：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">Used options:</span><br><span class="line"></span><br><span class="line">Text phrase table will be <span class="built_in">read</span> from: train/model/phrase-table.gz</span><br><span class="line"></span><br><span class="line">Output phrase table will be written to: binarised-model/phrase-table.minphr</span><br><span class="line"></span><br><span class="line">Step size <span class="keyword">for</span> <span class="built_in">source</span> landmark phrases: 2\^10=1024</span><br><span class="line"></span><br><span class="line">Source phrase fingerprint size: 16 bits / P(fp)=1.52588e-05</span><br><span class="line"></span><br><span class="line">Selected target phrase encoding: Huffman + PREnc</span><br><span class="line"></span><br><span class="line">Maxiumum allowed rank <span class="keyword">for</span> PREnc: 100</span><br><span class="line"></span><br><span class="line">Number of score components <span class="keyword">in</span> phrase table: 4</span><br><span class="line"></span><br><span class="line">Single Huffman code <span class="built_in">set</span> <span class="keyword">for</span> score components: no</span><br><span class="line"></span><br><span class="line">Using score quantization: no</span><br><span class="line"></span><br><span class="line">Explicitly included alignment information: <span class="built_in">yes</span></span><br><span class="line"></span><br><span class="line">Running with 1 threads</span><br><span class="line"></span><br><span class="line">Pass 1/3: Creating <span class="built_in">hash</span> <span class="keyword">function</span> <span class="keyword">for</span> rank assignment</span><br><span class="line"></span><br><span class="line">..................................................[5000000]</span><br><span class="line"></span><br><span class="line">..................................................[10000000]</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">Pass 2/3: Creating <span class="built_in">source</span> phrase index + Encoding target phrases</span><br><span class="line"></span><br><span class="line">..................................................[5000000]</span><br><span class="line"></span><br><span class="line">..................................................[10000000]</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">Intermezzo: Calculating Huffman code sets</span><br><span class="line"></span><br><span class="line">Creating Huffman codes <span class="keyword">for</span> 90037 target phrase symbols</span><br><span class="line"></span><br><span class="line">Creating Huffman codes <span class="keyword">for</span> 69575 scores</span><br><span class="line"></span><br><span class="line">Creating Huffman codes <span class="keyword">for</span> 5814858 scores</span><br><span class="line"></span><br><span class="line">Creating Huffman codes <span class="keyword">for</span> 58305 scores</span><br><span class="line"></span><br><span class="line">Creating Huffman codes <span class="keyword">for</span> 5407479 scores</span><br><span class="line"></span><br><span class="line">Creating Huffman codes <span class="keyword">for</span> 50 alignment points</span><br><span class="line"></span><br><span class="line">Pass 3/3: Compressing target phrases</span><br><span class="line"></span><br><span class="line">..................................................[5000000]</span><br><span class="line"></span><br><span class="line">..................................................[10000000]</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">Saving to binarised-model/phrase-table.minphr</span><br><span class="line"></span><br><span class="line">Done</span><br><span class="line"></span><br><span class="line">Used options:</span><br><span class="line"></span><br><span class="line">Text reordering table will be <span class="built_in">read</span> from:</span><br><span class="line">train/model/reordering-table.wbe-msd-bidirectional-fe.gz</span><br><span class="line"></span><br><span class="line">Output reordering table will be written to:</span><br><span class="line">binarised-model/reordering-table.minlexr</span><br><span class="line"></span><br><span class="line">Step size <span class="keyword">for</span> <span class="built_in">source</span> landmark phrases: 2\^10=1024</span><br><span class="line"></span><br><span class="line">Phrase fingerprint size: 16 bits / P(fp)=1.52588e-05</span><br><span class="line"></span><br><span class="line">Single Huffman code <span class="built_in">set</span> <span class="keyword">for</span> score components: no</span><br><span class="line"></span><br><span class="line">Using score quantization: no</span><br><span class="line"></span><br><span class="line">Running with 1 threads</span><br><span class="line"></span><br><span class="line">Pass 1/2: Creating phrase index + Counting scores</span><br><span class="line"></span><br><span class="line">..................................................[5000000]</span><br><span class="line"></span><br><span class="line">..................................................[10000000]</span><br><span class="line"></span><br><span class="line">..................................................[15000000]</span><br><span class="line"></span><br><span class="line">........................</span><br><span class="line"></span><br><span class="line">Intermezzo: Calculating Huffman code sets</span><br><span class="line"></span><br><span class="line">Creating Huffman codes <span class="keyword">for</span> 16117 scores</span><br><span class="line"></span><br><span class="line">Creating Huffman codes <span class="keyword">for</span> 8771 scores</span><br><span class="line"></span><br><span class="line">Creating Huffman codes <span class="keyword">for</span> 16117 scores</span><br><span class="line"></span><br><span class="line">Creating Huffman codes <span class="keyword">for</span> 15936 scores</span><br><span class="line"></span><br><span class="line">Creating Huffman codes <span class="keyword">for</span> 8975 scores</span><br><span class="line"></span><br><span class="line">Creating Huffman codes <span class="keyword">for</span> 16122 scores</span><br><span class="line"></span><br><span class="line">Pass 2/2: Compressing scores</span><br><span class="line"></span><br><span class="line">..................................................[5000000]</span><br><span class="line"></span><br><span class="line">..................................................[10000000]</span><br><span class="line"></span><br><span class="line">..................................................[15000000]</span><br><span class="line"></span><br><span class="line">........................</span><br><span class="line"></span><br><span class="line">Saving to binarised-model/reordering-table.minlexr</span><br><span class="line"></span><br><span class="line">Done</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>注意：如果你遇到了如下的错误，请确保你在刚开始用CMPH来编译摩西。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"> ...\~/mosesdecoder/bin/processPhraseTableMin: No such file or directory</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>将 ~&#x2F;working&#x2F;mert-work&#x2F;moses.ini复制到binarised-model<br>目录中，并且改变短语和重排序表以让他们指向二进制版本，你可以按如下的命令运行：</p>
+<ol>
+<li><p>将 binarised-model目录下的Moses.ini文件中的# feature<br>functions一栏中的PhraseDictionaryMemory 改为 PhraseDictionaryCompact</p>
+</li>
+<li><p>将 binarised-model目录下的Moses.ini文件中的# feature<br>functions一栏中的PhraseDictionary 的路径设置为如下：</p>
+</li>
+</ol>
+<p>$HOME&#x2F;working&#x2F;binarised-model&#x2F;phrase-table.minphr</p>
+<ol>
+<li>将 binarised-model目录下的Moses.ini文件中# feature<br>functions一栏中的LexicalReordering 的路径设置为如下：</li>
+</ol>
+<p>$HOME&#x2F;working&#x2F;binarised-model&#x2F;reordering-table</p>
+<p>修改后的Moses.ini中的feature function部分如下所示：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">\# feature functions</span><br><span class="line"></span><br><span class="line">[feature]</span><br><span class="line"></span><br><span class="line">UnknownWordPenalty</span><br><span class="line"></span><br><span class="line">WordPenalty</span><br><span class="line"></span><br><span class="line">PhrasePenalty</span><br><span class="line"></span><br><span class="line">PhraseDictionaryCompact name=TranslationModel0 num-features=4</span><br><span class="line">path=/home/ubuntu/corpus/un_en-zh_23/working/binarised-model/phrase-table.minphr</span><br><span class="line">input-factor=0 output-factor=0</span><br><span class="line"></span><br><span class="line">LexicalReordering name=LexicalReordering0 num-features=6</span><br><span class="line">type=wbe-msd-bidirectional-fe-allff input-factor=0 output-factor=0</span><br><span class="line">path=/home/ubuntu/corpus/un_en-zh_23/working/binarised-model/reordering-table</span><br><span class="line"></span><br><span class="line">Distortion</span><br><span class="line"></span><br><span class="line">KENLM name=LM0 factor=0</span><br><span class="line">path=/home/ubuntu/corpus/un_en-zh_23/lm/un_en-zh23.blm.cn order=3</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>再次运行Moses:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">\~/mosesdecoder/bin/moses -f \~/working/binarised-model/moses.ini</span><br></pre></td></tr></table></figure>
+
+<p>接下来你会发现加载和运行一次翻译将会变得非常迅速。这里我们输入英语句子“however ,<br>there are good reasons for supporting the government .”</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br></pre></td><td class="code"><pre><span class="line">Defined parameters (per moses.ini or switch):</span><br><span class="line"></span><br><span class="line">config: /home/ubuntu/corpus/un_en-zh_23/working/binarised-model/moses.ini</span><br><span class="line"></span><br><span class="line">distortion-limit: 6</span><br><span class="line"></span><br><span class="line">feature: UnknownWordPenalty WordPenalty PhrasePenalty PhraseDictionaryCompact</span><br><span class="line">name=TranslationModel0 num -features=4</span><br><span class="line">path=/home/ubuntu/corpus/un_en-zh_23/working/binarised-model/phrase-table.minphr</span><br><span class="line">input-factor=0 outp ut-factor=0 LexicalReordering name=LexicalReordering0</span><br><span class="line">num-features=6 <span class="built_in">type</span>=wbe-msd-bidirectional-fe-allff input-f actor=0</span><br><span class="line">output-factor=0</span><br><span class="line">path=/home/ubuntu/corpus/un_en-zh_23/working/binarised-model/reordering-table</span><br><span class="line">Distortion KENLM name=LM0 <span class="built_in">factor</span>=0</span><br><span class="line">path=/home/ubuntu/corpus/un_en-zh_23/lm/un_en-zh23.blm.cn order=3</span><br><span class="line"></span><br><span class="line">input-factors: 0</span><br><span class="line"></span><br><span class="line">mapping: 0 T 0</span><br><span class="line"></span><br><span class="line">weight: LexicalReordering0= 0.0614344 0.0245557 0.242242 0.0725016 0.0539617</span><br><span class="line">0.0566553 Distortion0= 0.00 534453 LM0= 0.0696027 WordPenalty0= -0.166007</span><br><span class="line">PhrasePenalty0= 0.0688629 TranslationModel0= 0.0390017 0.0457273 0 .0730895</span><br><span class="line">0.0210141 UnknownWordPenalty0= 1</span><br><span class="line"></span><br><span class="line">line=UnknownWordPenalty</span><br><span class="line"></span><br><span class="line">FeatureFunction: UnknownWordPenalty0 start: 0 end: 0</span><br><span class="line"></span><br><span class="line">line=WordPenalty</span><br><span class="line"></span><br><span class="line">FeatureFunction: WordPenalty0 start: 1 end: 1</span><br><span class="line"></span><br><span class="line">line=PhrasePenalty</span><br><span class="line"></span><br><span class="line">FeatureFunction: PhrasePenalty0 start: 2 end: 2</span><br><span class="line"></span><br><span class="line">line=PhraseDictionaryCompact name=TranslationModel0 num-features=4</span><br><span class="line">path=/home/ubuntu/corpus/un_en-zh_23/working/</span><br><span class="line">binarised-model/phrase-table.minphr input-factor=0 output-factor=0</span><br><span class="line"></span><br><span class="line">FeatureFunction: TranslationModel0 start: 3 end: 6</span><br><span class="line"></span><br><span class="line">line=LexicalReordering name=LexicalReordering0 num-features=6</span><br><span class="line"><span class="built_in">type</span>=wbe-msd-bidirectional-fe-allff input-factor=0 output-factor=0</span><br><span class="line">path=/home/ubuntu/corpus/un_en-zh_23/working/binarised-model/reordering-table</span><br><span class="line"></span><br><span class="line">Initializing Lexical Reordering Feature..</span><br><span class="line"></span><br><span class="line">FeatureFunction: LexicalReordering0 start: 7 end: 12</span><br><span class="line"></span><br><span class="line">line=Distortion</span><br><span class="line"></span><br><span class="line">FeatureFunction: Distortion0 start: 13 end: 13</span><br><span class="line"></span><br><span class="line">line=KENLM name=LM0 <span class="built_in">factor</span>=0</span><br><span class="line">path=/home/ubuntu/corpus/un_en-zh_23/lm/un_en-zh23.blm.cn order=3</span><br><span class="line"></span><br><span class="line">FeatureFunction: LM0 start: 14 end: 14</span><br><span class="line"></span><br><span class="line">Loading UnknownWordPenalty0</span><br><span class="line"></span><br><span class="line">Loading WordPenalty0</span><br><span class="line"></span><br><span class="line">Loading PhrasePenalty0</span><br><span class="line"></span><br><span class="line">Loading LexicalReordering0</span><br><span class="line"></span><br><span class="line">Loading Distortion0</span><br><span class="line"></span><br><span class="line">Loading LM0</span><br><span class="line"></span><br><span class="line">Loading TranslationModel0</span><br><span class="line"></span><br><span class="line">Created input-output object : [0.428] seconds</span><br><span class="line"></span><br><span class="line">however , there are good reasons <span class="keyword">for</span> supporting the government</span><br><span class="line"></span><br><span class="line">Translating: however , there are good reasons <span class="keyword">for</span> supporting the government</span><br><span class="line"></span><br><span class="line">Line 0: Initialize search took 0.000 seconds total</span><br><span class="line"></span><br><span class="line">Line 0: Collecting options took 0.567 seconds at moses/Manager.cpp Line 141</span><br><span class="line"></span><br><span class="line">Line 0: Search took 0.308 seconds</span><br><span class="line"></span><br><span class="line">然而 ， 有 充分 理由 支持 政府</span><br><span class="line"></span><br><span class="line">BEST TRANSLATION: 然而 ， 有 充分 理由 支持 政府 [1111111111] [total=-3.462]</span><br><span class="line">core=(0.000,-7.000,4.000,-13.611,-24.516,-3.431,-11.391,-3.059,0.000,0.000,-2.434,0.000,0.000,0.000,-34.379)</span><br><span class="line"></span><br><span class="line">Line 0: Decision rule took 0.000 seconds total</span><br><span class="line"></span><br><span class="line">Line 0: Additional reporting took 0.000 seconds total</span><br><span class="line"></span><br><span class="line">Line 0: Translation took 0.877 seconds total \\</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>你会发现，此次加载运行一次翻译系统只需0.877秒，而且在此期间，CPU和内存的占用几乎可以忽略不计。说明我们的二值化取得了非常良好的效果。在这一步，你可能很想知道这个翻译系统的表现如何。为了衡量这一点，我们使用另一组之前没有使用过的平行数据（测试集）。我们的测试集文件名称是un_test.cn和un_test.en。首先，和之前一样，我们需要对测试集进行tokenise<br>和truecase。</p>
+<p>此处对un_test.cn进行tokenise时依然采用thulac分词工具，得到un_test.fc文件。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">cd \~/corpus</span><br><span class="line"></span><br><span class="line">\~/mosesdecoder/scripts/tokenizer/tokenizer.perl -l en \\</span><br><span class="line"></span><br><span class="line">\&lt; dev/un_test.en \&gt; un_test.tok.en</span><br><span class="line"></span><br><span class="line">\~/mosesdecoder/scripts/recaser/truecase.perl --model truecase-model.en \\</span><br><span class="line"></span><br><span class="line">\&lt; un_test.tok.en \&gt; un_test.true.en</span><br><span class="line"></span><br><span class="line">\~/mosesdecoder/scripts/recaser/truecase.perl --model truecase-model.cn \\</span><br><span class="line"></span><br><span class="line">\&lt; un_test.fc \&gt; un_test.true.cn</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>可以针对次测试机过滤我们训练过的模型，这意味着我们只保留需要的条目来翻译。这会使翻译速度加快一些。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">cd \~/working</span><br><span class="line"></span><br><span class="line">\~/mosesdecoder/scripts/training/filter-model-given-input.pl \\</span><br><span class="line"></span><br><span class="line">filtered-newstest2011 \~/working/mert-work/moses.ini \~/corpus/un_test.true.en</span><br><span class="line">\\</span><br><span class="line"></span><br><span class="line">\-Binarizer \~/mosesdecoder/bin/processPhraseTableMin</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>运行命令后，你会看到如下的提示：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">Executing: <span class="built_in">mkdir</span> -p /home/ubuntu/corpus/un_en-zh_23/test/filtered-un_test</span><br><span class="line"></span><br><span class="line">Stripping XML...</span><br><span class="line"></span><br><span class="line">Executing: /home/ubuntu/mosesdecoder/scripts/training/../generic/strip-xml.perl</span><br><span class="line">\&lt; /home/ubuntu/corpus/un_en-zh_23/test/un_test.true.en \&gt;</span><br><span class="line">/home/ubuntu/corpus/un_en-zh_23/test/filtered-un_test/input.16677</span><br><span class="line"></span><br><span class="line">pt:PhraseDictionaryMemory name=TranslationModel0 num-features=4</span><br><span class="line">path=/home/ubuntu/corpus/un_en-zh_23/working/train/model/phrase-table.gz</span><br><span class="line">input-factor=0 output-factor=0</span><br><span class="line"></span><br><span class="line">Considering <span class="built_in">factor</span> 0</span><br><span class="line"></span><br><span class="line">ro:LexicalReordering name=LexicalReordering0 num-features=6</span><br><span class="line"><span class="built_in">type</span>=wbe-msd-bidirectional-fe-allff input-factor=0 output-factor=0</span><br><span class="line">path=/home/ubuntu/corpus/un_en-zh_23/working/train/model/reordering-table.wbe-msd-bidirectional-fe.gz</span><br><span class="line"></span><br><span class="line">Considering <span class="built_in">factor</span> 0</span><br><span class="line"></span><br><span class="line">Filtering files...</span><br><span class="line"></span><br><span class="line">filtering /home/ubuntu/corpus/un_en-zh_23/working/train/model/phrase-table.gz</span><br><span class="line">-\&gt;</span><br><span class="line">/home/ubuntu/corpus/un_en-zh_23/test/filtered-un_test/phrase-table.0-0.1.1...</span><br><span class="line"></span><br><span class="line">2351834 of 17491572 phrases pairs used (13.45%) - note: max length 10</span><br><span class="line"></span><br><span class="line">binarizing...</span><br><span class="line"></span><br><span class="line">Executing: gzip -<span class="built_in">cd</span></span><br><span class="line">/home/ubuntu/corpus/un_en-zh_23/test/filtered-un_test/phrase-table.0-0.1.1.gz \|</span><br><span class="line">LC_ALL=C <span class="built_in">sort</span> --compress-program gzip -T</span><br><span class="line">/home/ubuntu/corpus/un_en-zh_23/test/filtered-un_test \| gzip - \&gt;</span><br><span class="line">/home/ubuntu/corpus/un_en-zh_23/test/filtered-un_test/phrase-table.0-0.1.1.gz.sorted.gz</span><br><span class="line">&amp;&amp; /home/ubuntu/mosesdecoder/bin/processPhraseTableMin -<span class="keyword">in</span></span><br><span class="line">/home/ubuntu/corpus/un_en-zh_23/test/filtered-un_test/phrase-table.0-0.1.1.gz.sorted.gz</span><br><span class="line">-out /home/ubuntu/corpus/un_en-zh_23/test/filtered-un_test/phrase-table.0-0.1.1</span><br><span class="line">-nscores 4 -threads 1 &amp;&amp; <span class="built_in">rm</span></span><br><span class="line">/home/ubuntu/corpus/un_en-zh_23/test/filtered-un_test/phrase-table.0-0.1.1.gz.sorted.gz</span><br><span class="line"></span><br><span class="line">Used options:</span><br><span class="line"></span><br><span class="line">Text phrase table will be <span class="built_in">read</span> from:</span><br><span class="line">/home/ubuntu/corpus/un_en-zh_23/test/filtered-un_test/phrase-table.0-0.1.1.gz.sorted.gz</span><br><span class="line"></span><br><span class="line">Output phrase table will be written to:</span><br><span class="line">/home/ubuntu/corpus/un_en-zh_23/test/filtered-un_test/phrase-table.0-0.1.1.minphr</span><br><span class="line"></span><br><span class="line">Step size <span class="keyword">for</span> <span class="built_in">source</span> landmark phrases: 2\^10=1024</span><br><span class="line"></span><br><span class="line">Source phrase fingerprint size: 16 bits / P(fp)=1.52588e-05</span><br><span class="line"></span><br><span class="line">Selected target phrase encoding: Huffman + PREnc</span><br><span class="line"></span><br><span class="line">Maxiumum allowed rank <span class="keyword">for</span> PREnc: 100</span><br><span class="line"></span><br><span class="line">Number of score components <span class="keyword">in</span> phrase table: 4</span><br><span class="line"></span><br><span class="line">Single Huffman code <span class="built_in">set</span> <span class="keyword">for</span> score components: no</span><br><span class="line"></span><br><span class="line">Using score quantization: no</span><br><span class="line"></span><br><span class="line">Explicitly included alignment information: <span class="built_in">yes</span></span><br><span class="line"></span><br><span class="line">Running with 1 threads</span><br><span class="line"></span><br><span class="line">Pass 1/3: Creating <span class="built_in">hash</span> <span class="keyword">function</span> <span class="keyword">for</span> rank assignment</span><br><span class="line"></span><br><span class="line">.</span><br><span class="line"></span><br><span class="line">Pass 2/3: Creating <span class="built_in">source</span> phrase index + Encoding target phrases</span><br><span class="line"></span><br><span class="line">.</span><br><span class="line"></span><br><span class="line">Intermezzo: Calculating Huffman code sets</span><br><span class="line"></span><br><span class="line">Creating Huffman codes <span class="keyword">for</span> 37180 target phrase symbols</span><br><span class="line"></span><br><span class="line">Creating Huffman codes <span class="keyword">for</span> 59255 scores</span><br><span class="line"></span><br><span class="line">Creating Huffman codes <span class="keyword">for</span> 779126 scores</span><br><span class="line"></span><br><span class="line">Creating Huffman codes <span class="keyword">for</span> 55190 scores</span><br><span class="line"></span><br><span class="line">Creating Huffman codes <span class="keyword">for</span> 1373326 scores</span><br><span class="line"></span><br><span class="line">Creating Huffman codes <span class="keyword">for</span> 50 alignment points</span><br><span class="line"></span><br><span class="line">Pass 3/3: Compressing target phrases</span><br><span class="line"></span><br><span class="line">.</span><br><span class="line"></span><br><span class="line">Saving to</span><br><span class="line">/home/ubuntu/corpus/un_en-zh_23/test/filtered-un_test/phrase-table.0-0.1.1.minphr</span><br><span class="line"></span><br><span class="line">Done</span><br><span class="line"></span><br><span class="line">filtering</span><br><span class="line">/home/ubuntu/corpus/un_en-zh_23/working/train/model/reordering-table.wbe-msd-bidirectional-fe.gz</span><br><span class="line">-\&gt;</span><br><span class="line">/home/ubuntu/corpus/un_en-zh_23/test/filtered-un_test/reordering-table.wbe-msd-bidirectional-fe.0-0.1...</span><br><span class="line"></span><br><span class="line">2351834 of 17491572 phrases pairs used (13.45%) - note: max length 10</span><br><span class="line"></span><br><span class="line">binarizing...</span><br><span class="line"></span><br><span class="line">Executing: gzip -<span class="built_in">cd</span></span><br><span class="line">/home/ubuntu/corpus/un_en-zh_23/test/filtered-un_test/reordering-table.wbe-msd-bidirectional-fe.0-0.1.gz</span><br><span class="line">\| LC_ALL=C <span class="built_in">sort</span> --compress-program gzip -T</span><br><span class="line">/home/ubuntu/corpus/un_en-zh_23/test/filtered-un_test \| gzip - \&gt;</span><br><span class="line">/home/ubuntu/corpus/un_en-zh_23/test/filtered-un_test/reordering-table.wbe-msd-bidirectional-fe.0-0.1.gz.sorted.gz</span><br><span class="line">&amp;&amp; /home/ubuntu/mosesdecoder/bin/processLexicalTableMin -<span class="keyword">in</span></span><br><span class="line">/home/ubuntu/corpus/un_en-zh_23/test/filtered-un_test/reordering-table.wbe-msd-bidirectional-fe.0-0.1.gz.sorted.gz</span><br><span class="line">-out</span><br><span class="line">/home/ubuntu/corpus/un_en-zh_23/test/filtered-un_test/reordering-table.wbe-msd-bidirectional-fe.0-0.1</span><br><span class="line">-threads 1 &amp;&amp; <span class="built_in">rm</span></span><br><span class="line">/home/ubuntu/corpus/un_en-zh_23/test/filtered-un_test/reordering-table.wbe-msd-bidirectional-fe.0-0.1.gz.sorted.gz</span><br><span class="line"></span><br><span class="line">Used options:</span><br><span class="line"></span><br><span class="line">Text reordering table will be <span class="built_in">read</span> from:</span><br><span class="line">/home/ubuntu/corpus/un_en-zh_23/test/filtered-un_test/reordering-table.wbe-msd-bidirectional-fe.0-0.1.gz.sorted.gz</span><br><span class="line"></span><br><span class="line">Output reordering table will be written to:</span><br><span class="line">/home/ubuntu/corpus/un_en-zh_23/test/filtered-un_test/reordering-table.wbe-msd-bidirectional-fe.0-0.1.minlexr</span><br><span class="line"></span><br><span class="line">Step size <span class="keyword">for</span> <span class="built_in">source</span> landmark phrases: 2\^10=1024</span><br><span class="line"></span><br><span class="line">Phrase fingerprint size: 16 bits / P(fp)=1.52588e-05</span><br><span class="line"></span><br><span class="line">Single Huffman code <span class="built_in">set</span> <span class="keyword">for</span> score components: no</span><br><span class="line"></span><br><span class="line">Using score quantization: no</span><br><span class="line"></span><br><span class="line">Running with 1 threads</span><br><span class="line"></span><br><span class="line">Pass 1/2: Creating phrase index + Counting scores</span><br><span class="line"></span><br><span class="line">.......................</span><br><span class="line"></span><br><span class="line">Intermezzo: Calculating Huffman code sets</span><br><span class="line"></span><br><span class="line">Creating Huffman codes <span class="keyword">for</span> 14663 scores</span><br><span class="line"></span><br><span class="line">Creating Huffman codes <span class="keyword">for</span> 8197 scores</span><br><span class="line"></span><br><span class="line">Creating Huffman codes <span class="keyword">for</span> 14660 scores</span><br><span class="line"></span><br><span class="line">Creating Huffman codes <span class="keyword">for</span> 14562 scores</span><br><span class="line"></span><br><span class="line">Creating Huffman codes <span class="keyword">for</span> 8162 scores</span><br><span class="line"></span><br><span class="line">Creating Huffman codes <span class="keyword">for</span> 14774 scores</span><br><span class="line"></span><br><span class="line">Pass 2/2: Compressing scores</span><br><span class="line"></span><br><span class="line">.......................</span><br><span class="line"></span><br><span class="line">Saving to</span><br><span class="line">/home/ubuntu/corpus/un_en-zh_23/test/filtered-un_test/reordering-table.wbe-msd-bidirectional-fe.0-0.1.minlexr</span><br><span class="line"></span><br><span class="line">Done</span><br><span class="line"></span><br><span class="line">To run the decoder, please call:</span><br><span class="line"></span><br><span class="line">moses -f /home/ubuntu/corpus/un_en-zh_23/test/filtered-un_test/moses.ini -i</span><br><span class="line">/home/ubuntu/corpus/un_en-zh_23/test/filtered-un_test/input.16677</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>你可以在第一次翻译测试数据时运行BLEU脚本来测试解码器。当然，这需要很短一段时间。命令中的<br>-lc是无视大小写的BLEU评分，不使用参数-lc是大小写敏感的BLEU评分。 </p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">nohup nice \~/mosesdecoder/bin/moses \\</span><br><span class="line"></span><br><span class="line">\-f \~/working/filtered-un_test/moses.ini -i \\</span><br><span class="line"></span><br><span class="line">\&lt; \~/corpus/ un_test.true.en \\</span><br><span class="line"></span><br><span class="line">\&gt; \~/working/un_test.translated.cn \\</span><br><span class="line"></span><br><span class="line">2\&gt; \~/working/un_test.out</span><br><span class="line"></span><br><span class="line">\~/mosesdecoder/scripts/generic/multi-bleu.perl \\</span><br><span class="line"></span><br><span class="line">\-lc \~/corpus/un_test.true.cn \\</span><br><span class="line"></span><br><span class="line">\&lt; \~/working/un_test.translated.cn</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>上述命令中，un_test.true.en<br>是我们待翻译的文件，un_test.translated.cn是我们得到的翻译后的文件，un_test.out是我们在翻译过程中生成的日志文件，你可以用VIM工具查看其中的内容。</p>
+<p>命令执行完成后，我们会得到如下的信息：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">BLEU = 29.29, 68.1/36.9/22.0/13.3 (BP=1.000, ratio=1.001, hyp_len=106809,</span><br><span class="line">ref_len=106725)</span><br><span class="line"></span><br><span class="line">It is in-advisable to publish scores from multi-bleu.perl. The scores depend on</span><br><span class="line">your tokenizer, which is unlikely to be reproducible from your paper or</span><br><span class="line">consistent across research groups. Instead you should detokenize then use</span><br><span class="line">mteval-v14.pl, which has a standard tokenization. Scores from multi-bleu.perl</span><br><span class="line">can still be used for internal purposes when you have a consistent tokenizer.</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>从multi-bleu.perl得到的分数是可信的。<br>最终得到的分数取决于你的分词工具的好坏，在你的论文中或者整个研究小组中每次得到的分数都应该是不同的。相反，你应该使用mteval-v14.pl，它可以进行标准的符号化。当您拥有一致的标记生成器时，来自multi-bleu.perl的分数仍可用于内部目的。</p>
+<p>我们这里得到的BLEU成绩是29.29分，每次进行翻译时，得到的BLEU分数应该是不一样的。在tuning和最终test的时候参考译文的数量以及使用不同分词工具所造成的预处理的不同，语言模型是n-gram的不同都会影响到最终BLEU分数。</p>
+<h2 id="八-搭建moses-server"><a href="#八-搭建moses-server" class="headerlink" title="八 搭建moses server"></a>八 搭建moses server</h2><p>如果希望把moses作为服务开放使用，必须通过设置将moses设为moses<br>server。具体步骤如下： <br>1.<br>安装xmlrpc（如果前面按照本文档已经安装xmlrpc，该步可以略过。否则参见该文档前半部分。安装完成后重新编译moses）。 <br>2. 修改moses.pl参数 <br>进入~&#x2F;mosesdecoder&#x2F;contrib&#x2F;iSenWeb文件夹，打开moses.pl文件，在该文件中指定moses和moses.ini(配置文件)的位置。我这里的MOSES参数为“&#x2F;home&#x2F;ubuntu&#x2F;mosesdecoder&#x2F;bin&#x2F;moses”，<br>MOSES_INI参数为”<br>&#x2F;home&#x2F;ubuntu&#x2F;corpus&#x2F;un_en-zh_23&#x2F;working&#x2F;binarised-model&#x2F;moses.ini”。关闭并保存。如下所示： </p>
+<p>将Moses.pl文件中的</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">\#------------------------------------------------------------------------------</span><br><span class="line"></span><br><span class="line">\# constants, global vars, config</span><br><span class="line"></span><br><span class="line">my \$MOSES = &#x27;/home/tianliang/research/moses-smt/scripts/training/model/moses&#x27;;</span><br><span class="line"></span><br><span class="line">my \$MOSES_INI =</span><br><span class="line">&#x27;/home/tianliang/research/moses-smt/scripts/training/model/moses.ini&#x27;;</span><br><span class="line"></span><br><span class="line">die &quot;usage: daemon.pl \&lt;hostname\&gt; \&lt;port\&gt;&quot; unless (\@ARGV == 2);</span><br><span class="line"></span><br><span class="line">my \$LISTEN_HOST = shift;</span><br><span class="line"></span><br><span class="line">my \$LISTEN_PORT = shift;</span><br><span class="line"></span><br><span class="line">\#------------------------------------------------------------------------------</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>修改为：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">\<span class="comment">#------------------------------------------------------------------------------</span></span><br><span class="line"></span><br><span class="line">\<span class="comment"># constants, global vars, config</span></span><br><span class="line"></span><br><span class="line">my \<span class="variable">$MOSES</span> = <span class="string">&#x27;/home/ubuntu/mosesdecoder/bin/moses&#x27;</span>;</span><br><span class="line"></span><br><span class="line">my \<span class="variable">$MOSES_INI</span> =</span><br><span class="line"><span class="string">&#x27;/home/ubuntu/corpus/un_en-zh_23/working/binarised-model/moses.ini&#x27;</span>;</span><br><span class="line"></span><br><span class="line">die <span class="string">&quot;usage: daemon.pl \&lt;hostname\&gt; \&lt;port\&gt;&quot;</span> unless (\@ARGV == 2);</span><br><span class="line"></span><br><span class="line">my \<span class="variable">$LISTEN_HOST</span> = <span class="built_in">shift</span>;</span><br><span class="line"></span><br><span class="line">my \<span class="variable">$LISTEN_PORT</span> = <span class="built_in">shift</span>;</span><br><span class="line"></span><br><span class="line">\<span class="comment">#------------------------------------------------------------------------------</span></span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>进入到~&#x2F;mosesdecoder&#x2F;contrib&#x2F;iSenWeb文件夹，在terminal中输入：</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">./moses.pl 192.168.0.1 9999</span><br></pre></td></tr></table></figure>
+
+<p>即：moses.pl &lt;hostname&gt; &lt;port&gt;</p>
+<p>其中， 192.168.1.1 是本机地址，9999是端口号。TCP&#x2F;IP协议中端口号的范围从0~65535,1024以下的端口用于系统服务，1024~65535端口我们可以使用。我们可以在&#x2F;etc&#x2F;service文件中看到各个端口的情况。</p>
+<p>我们也可以持续运行moses server：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="built_in">nohup</span> \~ /mosesdecoder/contrib/iSenWeb/moses.pl 192.168.0.1 9999&amp;</span><br></pre></td></tr></table></figure>
+
+<p>运行命令后会显示忽略输入并把输出追加到”nohup.out”。即成功运行了moses<br>server。在Linux中，nohup的意思是忽略SIGHUP信号， 所以当运行nohup .&#x2F;a.out的时候，<br>关闭shell,<br>那么a.out进程还是存在的，即对SIGHUP信号免疫。后面的&amp;符号意为让任务在后台运行。 运行后会在当前路径下产生一个文件nohup.out。</p>
+<ol>
+<li><p>测试翻译平台： </p>
+</li>
+<li><p>输入：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot; may I help you&quot;</span> \| nc 192.168.0.1 9999</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>可以看到返回结果：</p>
+<p>我 是 否 可以 帮助 你</p>
+<ol start="5">
+<li>如果需要关闭moses server，使用killall moses.pl就可以了。</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="./tags/Machine-Translation/" rel="tag"># Machine Translation</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="./2022/05/15/ES6%E5%85%A5%E9%97%A8/" rel="prev" title="ES6入门">
+      <i class="fa fa-chevron-left"></i> ES6入门
+    </a></div>
+      <div class="post-nav-item">
+    <a href="./2022/10/17/hello-world/" rel="next" title="Hexo Hello World">
+      Hexo Hello World <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Moses%E7%B3%BB%E7%BB%9F%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">Moses系统简介</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Moses%E7%B3%BB%E7%BB%9F%E7%9A%84%E7%BB%84%E6%88%90%E9%83%A8%E5%88%86"><span class="nav-number">1.1.</span> <span class="nav-text">Moses系统的组成部分</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B4%A1%E7%8C%AE%E5%B7%A5%E5%85%B7"><span class="nav-number">1.2.</span> <span class="nav-text">贡献工具</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80-%E5%AE%89%E8%A3%85%E7%9B%B8%E5%85%B3%E4%BE%9D%E8%B5%96%E9%A1%B9%EF%BC%9A"><span class="nav-number">1.3.</span> <span class="nav-text">一 安装相关依赖项：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C-%E5%AE%89%E8%A3%85%E8%AF%8D%E5%AF%B9%E9%BD%90%E5%B7%A5%E5%85%B7GIZA"><span class="nav-number">1.4.</span> <span class="nav-text">二 安装词对齐工具GIZA++</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89-%E8%AF%AD%E6%96%99%E5%87%86%E5%A4%87"><span class="nav-number">1.5.</span> <span class="nav-text">三 语料准备</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B-%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%EF%BC%88Language-Model-Training%EF%BC%89"><span class="nav-number">1.6.</span> <span class="nav-text">四 语言模型训练（Language Model Training）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94-%E8%AE%AD%E7%BB%83%E7%BF%BB%E8%AF%91%E6%A8%A1%E5%9E%8B%EF%BC%88Training-the-Translation-System%EF%BC%89"><span class="nav-number">1.7.</span> <span class="nav-text">五 训练翻译模型（Training the Translation System）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD-%E8%B0%83%E4%BC%98-Tuning"><span class="nav-number">1.8.</span> <span class="nav-text">六 调优(Tuning)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%83-%E6%B5%8B%E8%AF%95"><span class="nav-number">1.9.</span> <span class="nav-text">七 测试</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AB-%E6%90%AD%E5%BB%BAmoses-server"><span class="nav-number">1.10.</span> <span class="nav-text">八 搭建moses server</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Alexander Ezharjan</p>
+  <div class="site-description" itemprop="description">This blog is maintained by Alexander Ezharjan, in order to record some useful things in life.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="./archives/">
+        
+          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="./categories/">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alexander Ezharjan</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="./lib/anime.min.js"></script>
+  <script src="./lib/velocity/velocity.min.js"></script>
+  <script src="./lib/velocity/velocity.ui.min.js"></script>
+
+<script src="./js/utils.js"></script>
+
+<script src="./js/motion.js"></script>
+
+
+<script src="./js/schemes/muse.js"></script>
+
+
+<script src="./js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
