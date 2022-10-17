@@ -3,7 +3,6 @@ title: ES6入门
 date: 2022-05-15 19:33:20
 categories: 
 - Notes
-tags:
 ---
 
 <h6 align="center">编者：艾孜尔江<h6>

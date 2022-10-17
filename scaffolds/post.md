@@ -1,5 +1,8 @@
 ---
 title: {{ title }}
 date: {{ date }}
-tags:
+categories:
 ---
+
+
+<h6 align="center">Editor: Alexander Ezharjan<h6>

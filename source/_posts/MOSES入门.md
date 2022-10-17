@@ -6,9 +6,9 @@ header-img: "img/post-bg-rwd.jpg"
 header-mask: 0.3
 categories: 
 - Notes
-tags: 
-- Machine Translation
 ---
+
+<h6 align="center">编者：艾孜尔江<h6>
 
 
 -------------

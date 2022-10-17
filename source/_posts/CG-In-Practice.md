@@ -4,7 +4,6 @@ date: 2022-03-18 23:49:16
 categories:
 - Computer Graphics
 top: true
-tags:
 ---
 
 <!-- <h1 align="center">Computer Graphics In Practice<h1>  -->
