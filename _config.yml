@@ -106,3 +106,9 @@ deploy:
   type: git
   repo: git@github.com:Ezharjan/Blog.git
   branch: build
+
+search:
+  path: search.xml
+  field: post
+  content: true
+  format: html

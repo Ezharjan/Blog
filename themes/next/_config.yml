@@ -995,10 +995,3 @@ vendors:
 css: css
 js: js
 images: images
-
-# Local Search搜索功能
-search:
-  path: search.xml
-  field: post
-  format: html
-  limit: 10000
