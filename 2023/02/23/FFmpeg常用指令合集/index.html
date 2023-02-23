@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/Blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/Blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/Blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/Blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/Blog/css/main.css">
+
+
+<link rel="stylesheet" href="/Blog/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"ezharjan.github.io","root":"/Blog/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Editor: Alexander Ezharjan     切割MP3，按时间准确切割   1ffmpeg -i F:\源.mp3 -ss 00:20:00 -to 02:30:05 F:\目标文件.mp3    MTS到MP4  说明：（-b 4m：码率是4M；-s 1280*720：这个是设定视频大小。这2个参数其实可以删掉） 1ffmpeg -i F:\源.mts -b 4M -s 128">
+<meta property="og:type" content="article">
+<meta property="og:title" content="FFmpeg常用指令合集">
+<meta property="og:url" content="https://ezharjan.github.io/Blog/2023/02/23/FFmpeg%E5%B8%B8%E7%94%A8%E6%8C%87%E4%BB%A4%E5%90%88%E9%9B%86/index.html">
+<meta property="og:site_name">
+<meta property="og:description" content="Editor: Alexander Ezharjan     切割MP3，按时间准确切割   1ffmpeg -i F:\源.mp3 -ss 00:20:00 -to 02:30:05 F:\目标文件.mp3    MTS到MP4  说明：（-b 4m：码率是4M；-s 1280*720：这个是设定视频大小。这2个参数其实可以删掉） 1ffmpeg -i F:\源.mts -b 4M -s 128">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2023-02-23T08:12:44.000Z">
+<meta property="article:modified_time" content="2023-02-23T08:22:05.257Z">
+<meta property="article:author" content="Alexander Ezharjan">
+<meta property="article:tag" content="Software, Lab, Engineer, Game Engine, Alexander, Ezharjan">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://ezharjan.github.io/Blog/2023/02/23/FFmpeg%E5%B8%B8%E7%94%A8%E6%8C%87%E4%BB%A4%E5%90%88%E9%9B%86/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>FFmpeg常用指令合集 | </title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/Blog/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title"></h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">Blog By Alexander</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/Blog/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/Blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ezharjan.github.io/Blog/2023/02/23/FFmpeg%E5%B8%B8%E7%94%A8%E6%8C%87%E4%BB%A4%E5%90%88%E9%9B%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/Blog/images/avatar.gif">
+      <meta itemprop="name" content="Alexander Ezharjan">
+      <meta itemprop="description" content="This blog is maintained by Alexander Ezharjan, in order to record some useful things in life.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          FFmpeg常用指令合集
+        </h1>
+
+        <div class="post-meta">
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2023-02-23 16:12:44 / Modified: 16:22:05" itemprop="dateCreated datePublished" datetime="2023-02-23T16:12:44+08:00">2023-02-23</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/Blog/categories/Notes/" itemprop="url" rel="index"><span itemprop="name">Notes</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h6 align="center">Editor: Alexander Ezharjan<h6>
+
+
+
+<ol>
+<li><strong>切割MP3，按时间准确切割</strong></li>
+</ol>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i F:\源.mp3 -ss 00:20:00 -to 02:30:05 F:\目标文件.mp3</span><br></pre></td></tr></table></figure>
+
+
+<ol>
+<li><strong>MTS到MP4</strong></li>
+</ol>
+<p><em>说明：（-b 4m：码率是4M；-s 1280*720：这个是设定视频大小。这2个参数其实可以删掉）</em></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i F:\源.mts -b 4M -s 1280*720 F:\结果.mp4</span><br></pre></td></tr></table></figure>
+
+
+<ol start="3">
+<li><strong>MP4到WMV</strong></li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i f:\视频.mp4 -b 4M f:\out.wmv</span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li><strong>MP4图像旋转</strong></li>
+</ol>
+<p><em>说明：主要参数： -vf “transpose&#x3D;1” ，这里等于1是顺时针90度旋转；如果用手机录制的时候录反了，则执行2次这个操作就正过来了</em></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i f:\o.mp4 -vf &quot;transpose=1&quot; f:\o2.mp4</span><br></pre></td></tr></table></figure>
+
+
+<ol start="5">
+<li><strong>MP4到MP4改尺寸</strong></li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i G:\源.mp4 -b 4M -s 640*340 g:\OUT.mp4</span><br></pre></td></tr></table></figure>
+
+<ol start="6">
+<li><strong>MP4到MP4改尺寸加水印</strong></li>
+</ol>
+<p><em>说明：1: -vf “movie&#x3D;logo.png [logo];[in][logo] overlay&#x3D;10:20 [out]” 这里面的是加水印的参数，logo.png是我自己做的PNG水印，大小</em><br><em>300<em>100,10:20是水印的位置，为了方便，就把logo.png拷贝到FFMPEg的bin目录下(必须放，加路径就失败)，这样不用再加路径了 ;2: -b 2M 是用2M压缩率; 3: -s 640</em>340 意思是图像分辨率改为640*340。</em></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i G:\源.mp4 -vf &quot;movie=logo.png [logo];[in][logo] overlay=10:20 [out]&quot; -b 2M -s 640*340 g:\OUT.mp4</span><br></pre></td></tr></table></figure>
+
+
+<ol start="7">
+<li><strong>快速剪切某段视频作为输出</strong></li>
+</ol>
+<p><em>说明：上面截取 H:\源.mpg 这个视频，从第0秒开始，到23分20秒，这样一段，保存到G:\out.mp4，注意参数必须是 -c copy ，这样执行起来特别快，也就不到半分钟就搞定。</em></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i H:\源.mpg -ss 0:0:0 -to 0:23:20 -c copy G:\OUT.MP4</span><br></pre></td></tr></table></figure>
+
+<ol start="8">
+<li><strong>该编码为H265,让MP4瘦身2&#x2F;3，1G的MP4可以压缩到300M</strong></li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i 源.MP4 -vcodec libx265 -acodec copy F:\OUT.MP4</span><br></pre></td></tr></table></figure>
+
+
+<ol start="9">
+<li><strong>WAV转换格式到amr</strong></li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i test.wav -acodec libamr_nb -ab 12.2k -ar 8000 -ac 1 wav2amr.amr</span><br></pre></td></tr></table></figure>
+
+<ol start="10">
+<li><strong>提取视频中的声音保存成一个mp3</strong></li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i 源.mp4 输出.mp3</span><br></pre></td></tr></table></figure>
+
+
+<ol start="11">
+<li><strong>要实现批量转换，可以直接用这个批处理文件</strong></li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">for %%i in (*.mkv) do ffmpeg.exe -i &quot;%%i&quot; -vcodec copy -acodec copy &quot;%%~ni.mp4&quot;</span><br></pre></td></tr></table></figure>
+
+<ol start="12">
+<li><strong>合并多个MP4为一个</strong></li>
+</ol>
+<p><em>方法一</em></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i INPUT1.MP4 -i INPUT2.MP4 -f FORMAT -acodec AUDIOCODEC -vcodec VIDEOCODEC -sameq OUTPUT.MP4</span><br></pre></td></tr></table></figure>
+
+
+<p><em>方法二</em></p>
+<p>（1） 先创建一个文本文件 <code>filelist.txt</code>， 内容如下:(注意input1、2、3是你的文件的名字，都在该目录下)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">file &#x27;input1.mp4&#x27;</span><br><span class="line">file &#x27;input2.mp4&#x27;</span><br><span class="line">file &#x27;input3.mp4&#x27;</span><br></pre></td></tr></table></figure>
+
+
+<p>（2） 以上是这个文本文件的内容，保存后，在命令行执行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -f concat -i filelist.txt -c copy output.mp4</span><br></pre></td></tr></table></figure>
+
+
+<ol start="13">
+<li><strong>下载直播流</strong></li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">FFmpeg -i xxxxxxxxx.m3u8 -c copy out.mp4</span><br></pre></td></tr></table></figure>
+
+<ol start="14">
+<li><strong>FFmpeg将MP4转换为M3U8</strong></li>
+</ol>
+<p>（1）  直接将MP4文件转成m3u8：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i demo.mp4 -hls_time 10 -hls_list_size 0 -hls_segment_filename ene_%05d.ts ene.m3u8</span><br></pre></td></tr></table></figure>
+
+
+
+<p>（2） 如果已经是ts文件了,则只需要执行下方命令即可:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i demo.ts -c copy -map 0 -f segment -segment_list playlist.m3u8 -segment_time 10 output%03d.ts</span><br></pre></td></tr></table></figure>
+
+
+<p>（3） 将大量分割成ts文件的视频片段全部转换成mp4视频片段 — 直接上批处理脚本:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> %%a <span class="keyword">in</span> (<span class="string">&quot;D:\VideoProjects\NewDemo\*.ts&quot;</span>) <span class="keyword">do</span> ffmpeg -i <span class="string">&quot;%%a&quot;</span>   -vcodec copy -vcodec copy -f mp4 <span class="string">&quot;D:\VideoProjects\NewDemo\NewMP4\%%~na.mp4&quot;</span></span><br><span class="line">pause</span><br></pre></td></tr></table></figure>
+
+<p>（4） 上面的  ffmpeg -i test.ts -acodec copy -vcodec copy -f mp4 test.mp4  是将ts文件转换为mp4文件的意思，再在其之上套了一层for循环，%%a就是每个文件，转换命令最末尾的%%~na是将文件保持原来的文件名的情况下进行输出，存放到指定文件夹的意思。</p>
+<ol start="15">
+<li><strong>mp4视频转flv</strong></li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i test.mp4 -acodec copy -vcodec copy -f flv test.flv </span><br></pre></td></tr></table></figure>
+
+<ol start="16">
+<li><strong>将本地指定的demo.ts文件进行推流</strong></li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -re  -i demo.ts  -c copy -f mpegts   udp://127.0.0.1:1997</span><br></pre></td></tr></table></figure>
+
+<ol start="17">
+<li><strong>强制把输出视频文件帧率改为 24 fps</strong></li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i input.avi -r 24 output.avi</span><br></pre></td></tr></table></figure>
+
+
+<ol start="18">
+<li><strong>对视频每个一秒截一个图并存在本地</strong></li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i out.mp4 -f image2 -vf fps=fps=1 out%d.png</span><br></pre></td></tr></table></figure>
+
+
+<ol start="19">
+<li><strong>每隔20秒截一个图</strong></li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i out.mp4 -f image2 -vf fps=fps=1/20 out%d.png</span><br></pre></td></tr></table></figure>
+
+
+<ol start="20">
+<li><strong>将视频转换为图片，一帧一图</strong></li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg -i out.mp4 out%4d.png</span><br></pre></td></tr></table></figure>
+
+<br>
+<br>
+
+
+
+<p><br> <a href="https://www.jianshu.com/p/91727ab25227" target="_blank">参考</a><br><br> <a href="https://ffmpeg.org/ffmpeg.html" target="_blank">官网</a></p>
+</h6></h6>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/Blog/2023/02/13/49%E5%A4%A9%E6%95%88%E5%BA%94/" rel="prev" title="49天效应">
+      <i class="fa fa-chevron-left"></i> 49天效应
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-6"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">Editor: Alexander Ezharjan
+
+
+
+
+切割MP3，按时间准确切割
+
+ 1ffmpeg -i F:\源.mp3 -ss 00:20:00 -to 02:30:05 F:\目标文件.mp3
+
+
+
+MTS到MP4
+
+说明：（-b 4m：码率是4M；-s 1280*720：这个是设定视频大小。这2个参数其实可以删掉）
+1ffmpeg -i F:\源.mts -b 4M -s 1280*720 F:\结果.mp4
+
+
+
+MP4到WMV
+
+1ffmpeg -i f:\视频.mp4 -b 4M f:\out.wmv
+
+
+MP4图像旋转
+
+说明：主要参数： -vf “transpose&#x3D;1” ，这里等于1是顺时针90度旋转；如果用手机录制的时候录反了，则执行2次这个操作就正过来了
+1ffmpeg -i f:\o.mp4 -vf &quot;transpose&#x3D;1&quot; f:\o2.mp4
+
+
+
+MP4到MP4改尺寸
+
+1ffmpeg -i G:\源.mp4 -b 4M -s 640*340 g:\OUT.mp4
+
+
+MP4到MP4改尺寸加水印
+
+说明：1: -vf “movie&#x3D;logo.png [logo];[in][logo] overlay&#x3D;10:20 [out]” 这里面的是加水印的参数，logo.png是我自己做的PNG水印，大小300100,10:20是水印的位置，为了方便，就把logo.png拷贝到FFMPEg的bin目录下(必须放，加路径就失败)，这样不用再加路径了 ;2: -b 2M 是用2M压缩率; 3: -s 640340 意思是图像分辨率改为640*340。
+1ffmpeg -i G:\源.mp4 -vf &quot;movie&#x3D;logo.png [logo];[in][logo] overlay&#x3D;10:20 [out]&quot; -b 2M -s 640*340 g:\OUT.mp4
+
+
+
+快速剪切某段视频作为输出
+
+说明：上面截取 H:\源.mpg 这个视频，从第0秒开始，到23分20秒，这样一段，保存到G:\out.mp4，注意参数必须是 -c copy ，这样执行起来特别快，也就不到半分钟就搞定。
+1ffmpeg -i H:\源.mpg -ss 0:0:0 -to 0:23:20 -c copy G:\OUT.MP4
+
+
+该编码为H265,让MP4瘦身2&#x2F;3，1G的MP4可以压缩到300M
+
+1ffmpeg -i 源.MP4 -vcodec libx265 -acodec copy F:\OUT.MP4
+
+
+
+WAV转换格式到amr
+
+1ffmpeg -i test.wav -acodec libamr_nb -ab 12.2k -ar 8000 -ac 1 wav2amr.amr
+
+
+提取视频中的声音保存成一个mp3
+
+1ffmpeg -i 源.mp4 输出.mp3
+
+
+
+要实现批量转换，可以直接用这个批处理文件
+
+1for %%i in (*.mkv) do ffmpeg.exe -i &quot;%%i&quot; -vcodec copy -acodec copy &quot;%%~ni.mp4&quot;
+
+
+合并多个MP4为一个
+
+方法一
+1ffmpeg -i INPUT1.MP4 -i INPUT2.MP4 -f FORMAT -acodec AUDIOCODEC -vcodec VIDEOCODEC -sameq OUTPUT.MP4
+
+
+方法二
+（1） 先创建一个文本文件 filelist.txt， 内容如下:(注意input1、2、3是你的文件的名字，都在该目录下)
+123file &#39;input1.mp4&#39;file &#39;input2.mp4&#39;file &#39;input3.mp4&#39;
+
+
+（2） 以上是这个文本文件的内容，保存后，在命令行执行
+1ffmpeg -f concat -i filelist.txt -c copy output.mp4
+
+
+
+下载直播流
+
+1FFmpeg -i xxxxxxxxx.m3u8 -c copy out.mp4
+
+
+FFmpeg将MP4转换为M3U8
+
+（1）  直接将MP4文件转成m3u8：
+1ffmpeg -i demo.mp4 -hls_time 10 -hls_list_size 0 -hls_segment_filename ene_%05d.ts ene.m3u8
+
+
+
+（2） 如果已经是ts文件了,则只需要执行下方命令即可:
+1ffmpeg -i demo.ts -c copy -map 0 -f segment -segment_list playlist.m3u8 -segment_time 10 output%03d.ts
+
+
+（3） 将大量分割成ts文件的视频片段全部转换成mp4视频片段 — 直接上批处理脚本:
+12for %%a in (&quot;D:\VideoProjects\NewDemo\*.ts&quot;) do ffmpeg -i &quot;%%a&quot;   -vcodec copy -vcodec copy -f mp4 &quot;D:\VideoProjects\NewDemo\NewMP4\%%~na.mp4&quot;pause
+
+（4） 上面的  ffmpeg -i test.ts -acodec copy -vcodec copy -f mp4 test.mp4  是将ts文件转换为mp4文件的意思，再在其之上套了一层for循环，%%a就是每个文件，转换命令最末尾的%%~na是将文件保持原来的文件名的情况下进行输出，存放到指定文件夹的意思。
+
+mp4视频转flv
+
+1ffmpeg -i test.mp4 -acodec copy -vcodec copy -f flv test.flv 
+
+
+将本地指定的demo.ts文件进行推流
+
+1ffmpeg -re  -i demo.ts  -c copy -f mpegts   udp:&#x2F;&#x2F;127.0.0.1:1997
+
+
+强制把输出视频文件帧率改为 24 fps
+
+1ffmpeg -i input.avi -r 24 output.avi
+
+
+
+对视频每个一秒截一个图并存在本地
+
+1ffmpeg -i out.mp4 -f image2 -vf fps&#x3D;fps&#x3D;1 out%d.png
+
+
+
+每隔20秒截一个图
+
+1ffmpeg -i out.mp4 -f image2 -vf fps&#x3D;fps&#x3D;1&#x2F;20 out%d.png
+
+
+
+将视频转换为图片，一帧一图
+
+1ffmpeg -i out.mp4 out%4d.png
+
+
+
+
+
+
+ 参考 官网
+</span></a></li><li class="nav-item nav-level-6"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">
+
+
+
+
+切割MP3，按时间准确切割
+
+ 1ffmpeg -i F:\源.mp3 -ss 00:20:00 -to 02:30:05 F:\目标文件.mp3
+
+
+
+MTS到MP4
+
+说明：（-b 4m：码率是4M；-s 1280*720：这个是设定视频大小。这2个参数其实可以删掉）
+1ffmpeg -i F:\源.mts -b 4M -s 1280*720 F:\结果.mp4
+
+
+
+MP4到WMV
+
+1ffmpeg -i f:\视频.mp4 -b 4M f:\out.wmv
+
+
+MP4图像旋转
+
+说明：主要参数： -vf “transpose&#x3D;1” ，这里等于1是顺时针90度旋转；如果用手机录制的时候录反了，则执行2次这个操作就正过来了
+1ffmpeg -i f:\o.mp4 -vf &quot;transpose&#x3D;1&quot; f:\o2.mp4
+
+
+
+MP4到MP4改尺寸
+
+1ffmpeg -i G:\源.mp4 -b 4M -s 640*340 g:\OUT.mp4
+
+
+MP4到MP4改尺寸加水印
+
+说明：1: -vf “movie&#x3D;logo.png [logo];[in][logo] overlay&#x3D;10:20 [out]” 这里面的是加水印的参数，logo.png是我自己做的PNG水印，大小300100,10:20是水印的位置，为了方便，就把logo.png拷贝到FFMPEg的bin目录下(必须放，加路径就失败)，这样不用再加路径了 ;2: -b 2M 是用2M压缩率; 3: -s 640340 意思是图像分辨率改为640*340。
+1ffmpeg -i G:\源.mp4 -vf &quot;movie&#x3D;logo.png [logo];[in][logo] overlay&#x3D;10:20 [out]&quot; -b 2M -s 640*340 g:\OUT.mp4
+
+
+
+快速剪切某段视频作为输出
+
+说明：上面截取 H:\源.mpg 这个视频，从第0秒开始，到23分20秒，这样一段，保存到G:\out.mp4，注意参数必须是 -c copy ，这样执行起来特别快，也就不到半分钟就搞定。
+1ffmpeg -i H:\源.mpg -ss 0:0:0 -to 0:23:20 -c copy G:\OUT.MP4
+
+
+该编码为H265,让MP4瘦身2&#x2F;3，1G的MP4可以压缩到300M
+
+1ffmpeg -i 源.MP4 -vcodec libx265 -acodec copy F:\OUT.MP4
+
+
+
+WAV转换格式到amr
+
+1ffmpeg -i test.wav -acodec libamr_nb -ab 12.2k -ar 8000 -ac 1 wav2amr.amr
+
+
+提取视频中的声音保存成一个mp3
+
+1ffmpeg -i 源.mp4 输出.mp3
+
+
+
+要实现批量转换，可以直接用这个批处理文件
+
+1for %%i in (*.mkv) do ffmpeg.exe -i &quot;%%i&quot; -vcodec copy -acodec copy &quot;%%~ni.mp4&quot;
+
+
+合并多个MP4为一个
+
+方法一
+1ffmpeg -i INPUT1.MP4 -i INPUT2.MP4 -f FORMAT -acodec AUDIOCODEC -vcodec VIDEOCODEC -sameq OUTPUT.MP4
+
+
+方法二
+（1） 先创建一个文本文件 filelist.txt， 内容如下:(注意input1、2、3是你的文件的名字，都在该目录下)
+123file &#39;input1.mp4&#39;file &#39;input2.mp4&#39;file &#39;input3.mp4&#39;
+
+
+（2） 以上是这个文本文件的内容，保存后，在命令行执行
+1ffmpeg -f concat -i filelist.txt -c copy output.mp4
+
+
+
+下载直播流
+
+1FFmpeg -i xxxxxxxxx.m3u8 -c copy out.mp4
+
+
+FFmpeg将MP4转换为M3U8
+
+（1）  直接将MP4文件转成m3u8：
+1ffmpeg -i demo.mp4 -hls_time 10 -hls_list_size 0 -hls_segment_filename ene_%05d.ts ene.m3u8
+
+
+
+（2） 如果已经是ts文件了,则只需要执行下方命令即可:
+1ffmpeg -i demo.ts -c copy -map 0 -f segment -segment_list playlist.m3u8 -segment_time 10 output%03d.ts
+
+
+（3） 将大量分割成ts文件的视频片段全部转换成mp4视频片段 — 直接上批处理脚本:
+12for %%a in (&quot;D:\VideoProjects\NewDemo\*.ts&quot;) do ffmpeg -i &quot;%%a&quot;   -vcodec copy -vcodec copy -f mp4 &quot;D:\VideoProjects\NewDemo\NewMP4\%%~na.mp4&quot;pause
+
+（4） 上面的  ffmpeg -i test.ts -acodec copy -vcodec copy -f mp4 test.mp4  是将ts文件转换为mp4文件的意思，再在其之上套了一层for循环，%%a就是每个文件，转换命令最末尾的%%~na是将文件保持原来的文件名的情况下进行输出，存放到指定文件夹的意思。
+
+mp4视频转flv
+
+1ffmpeg -i test.mp4 -acodec copy -vcodec copy -f flv test.flv 
+
+
+将本地指定的demo.ts文件进行推流
+
+1ffmpeg -re  -i demo.ts  -c copy -f mpegts   udp:&#x2F;&#x2F;127.0.0.1:1997
+
+
+强制把输出视频文件帧率改为 24 fps
+
+1ffmpeg -i input.avi -r 24 output.avi
+
+
+
+对视频每个一秒截一个图并存在本地
+
+1ffmpeg -i out.mp4 -f image2 -vf fps&#x3D;fps&#x3D;1 out%d.png
+
+
+
+每隔20秒截一个图
+
+1ffmpeg -i out.mp4 -f image2 -vf fps&#x3D;fps&#x3D;1&#x2F;20 out%d.png
+
+
+
+将视频转换为图片，一帧一图
+
+1ffmpeg -i out.mp4 out%4d.png
+
+
+
+
+
+
+ 参考 官网
+</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Alexander Ezharjan</p>
+  <div class="site-description" itemprop="description">This blog is maintained by Alexander Ezharjan, in order to record some useful things in life.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/Blog/archives/">
+        
+          <span class="site-state-item-count">15</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/Blog/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Alexander Ezharjan</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/Blog/lib/anime.min.js"></script>
+  <script src="/Blog/lib/velocity/velocity.min.js"></script>
+  <script src="/Blog/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/Blog/js/utils.js"></script>
+
+<script src="/Blog/js/motion.js"></script>
+
+
+<script src="/Blog/js/schemes/muse.js"></script>
+
+
+<script src="/Blog/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/Blog/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
