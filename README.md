@@ -22,7 +22,11 @@
 4. `hexo clean` then `hexo s` to view in local serve page
 5. Revise blog contents.
 6. Unzip and place the `lua-5.3.6_Win32_bin` into your system environment in order to use some automatic tools.
-7. Then run `lua deployer` in this folder, or conduct the following commands in console to deploy and push.
+7. Then run `lua deployer` in this folder, or conduct the following commands in console to deploy and push.  
+
+**Note**
+If you are on a new computer, just push the source codes in master branch then use the your old computer which has the public keys already been generated before to deploy the codes.
+Otherwise, you have to regenerate the public keys yourself on the new computer so as to deploy the final result.
 
 <br>
 
