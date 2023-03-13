@@ -17,12 +17,11 @@ function tryTillSucceed(arg, tryTimes)
 end
 
 local cmds = {
+    "git pull origin build",
+    "git pull origin master",
+    "hexo clean",
     "hexo g",
-    "hexo d",
-    "git add .",
-    'git commit -m "auto"',
-    "git push -u origin master",
-    "git pull"
+    "hexo d"
 }
 
 -- local pushMaster2github = "git push -u origin master"
