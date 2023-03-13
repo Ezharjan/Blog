@@ -463,6 +463,43 @@ All together there are 6 parenting combinations to choose from. In each case gim
       </categories>
   </entry>
   <entry>
+    <title>Ways to Reduce Similarity of Papers Submitted via Turnitin</title>
+    <url>/Blog/2023/03/13/Ways-to-Reduce-Similarity-of-Papers-Submitted-via-Turnitin/</url>
+    <content><![CDATA[<h6 align="center">Editor: Alexander Ezharjan<h6>
+
+
+<p>Using this method, the similarity index will be reduced enormously:</p>
+<p><strong>Experimental Use Only</strong></p>
+<ol>
+<li>Write using Word;</li>
+<li>Export as PDF in Word;</li>
+<li>Open exported PDF;</li>
+<li>Export all the pages into multiple JPEG files;</li>
+<li>Create a new Word document and set its style of all borders to 0cm;</li>
+<li>Integrate all the JPEG files into the the Word document at once;</li>
+<li>Save the Word document created in step-6 as a PDF file;</li>
+<li>Combine the PDF file created in step-2 with the files created in step-7 to reduce the similarity rate of the paper.</li>
+<li>Eg. In my tested case, ‘final-opt-v1.pdf’ used only Page 7~11 as the image, the similarity index droped from 44% to 43%; while ‘final-opt-v2.pdf’ added Page 19~21 based on it, the similarity index dropped from 43% to 27%.</li>
+</ol>
+<br>
+
+<p><img src="https://img2023.cnblogs.com/blog/1991547/202303/1991547-20230313115609390-30665254.png"></p>
+<br>
+
+
+<p><strong>Note</strong> that the <strong>FILE SIZE MATTERS</strong>!<br>Reduce the file size as much as possible while keeping the resolution as high as possible!</p>
+<p><em>Be kindly reminded that this is only an experiment for testing the qualification of using Turnitin as a formal way for submitting assignment RATHER THAN an approach for submitting the papers directly via the methods mentioned above.</em></p>
+<br>
+<br>
+<br>
+
+<p><a href="https://guides.lib.monash.edu/turnitin/increasing-originality">Here</a> are <a href="https://guides.lib.monash.edu/ld.php?content_id=8482075">other formal ways</a> to reduce similarity index better.</p>
+</h6></h6>]]></content>
+      <categories>
+        <category>Notes</category>
+      </categories>
+  </entry>
+  <entry>
     <title>Video List</title>
     <url>/Blog/2023/02/24/Video-List/</url>
     <content><![CDATA[<h1 id="My-Lectures-amp-Micro-films-amp-Videos"><a href="#My-Lectures-amp-Micro-films-amp-Videos" class="headerlink" title="My Lectures &amp; Micro-films &amp; Videos"></a>My Lectures &amp; Micro-films &amp; Videos</h1><h6 align="center">Editor: Alexander Ezharjan<h6>
@@ -478,7 +515,7 @@ All together there are 6 parenting combinations to choose from. In each case gim
 <li>[PREFIX]&#x2F;MtCl0HI2JJE</li>
 <li>[PREFIX]&#x2F;B59-yAfN-5c</li>
 <li>[PREFIX]&#x2F;UfdyJO3H5mo</li>
-<li></li>
+<li>[PREFIX]&#x2F;uGPFPjTT2hE</li>
 </ol>
 <b>
 
