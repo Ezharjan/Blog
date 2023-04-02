@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Visualizations with Web Audio API</title>
+    </head>
+    <body>
+        <input id="audioFile" type="file" accept="audio/*"/>
+        <canvas id="canvas"></canvas>
+        <script>
+            const canvas = document.querySelector("#canvas");
+            const inputFile = document.querySelector("#audioFile");
+
+            const canvasWidth = window.innerWidth;
+            const canvasHeight = window.innerHeight;
+            const canvasContext = canvas.getContext("2d");
+            canvas.width = canvasWidth;
+            canvas.height = canvasHeight;
+            let frequencyData = [], bufferLength = 0, analyser;
+
+            inputFile.onchange = function(event) {
+                const file = event.target.files[0];
+
+                const reader = new FileReader();
+                reader.readAsArrayBuffer(file);
+                reader.onload = evt=>{
+                    const encodedBuffer = evt.currentTarget.result;
+                    const context = new AudioContext();
+                    context.decodeAudioData(encodedBuffer, decodedBuffer=>{
+                        const dataSource = context.createBufferSource();
+                        dataSource.buffer = decodedBuffer;
+                        analyser = createAnalyser(context, dataSource);
+                        bufferLength = analyser.frequencyBinCount;
+                        frequencyData = new Uint8Array(bufferLength);
+                        dataSource.start();
+                        drawBar();
+                    }
+                    )
+                }
+
+                function createAnalyser(context, dataSource) {
+                    const analyser = context.createAnalyser();
+                    analyser.fftSize = 512;
+                    dataSource.connect(analyser);
+                    analyser.connect(context.destination);
+                    return analyser;
+                }
+
+                function drawBar() {
+                    requestAnimationFrame(drawBar);
+                    analyser.getByteFrequencyData(frequencyData);
+                    canvasContext.clearRect(0, 0, canvasWidth, canvasHeight);
+                    let barHeight, barWidth, r, g, b;
+                    for (let i = 0, x = 0; i < bufferLength; i++) {
+                        barHeight = frequencyData[i];
+                        barWidth = canvasWidth / bufferLength * 2;
+                        r = barHeight + 25 * (i / bufferLength);
+                        g = 250 * (i / bufferLength);
+                        b = 50;
+                        canvasContext.fillStyle = "rgb(" + r + "," + g + "," + b + ")";
+                        canvasContext.fillRect(x, canvasHeight - barHeight, barWidth, barHeight);
+                        x += barWidth + 2;
+                    }
+                }
+            }
+        </script>
+    </body>
+</html>
