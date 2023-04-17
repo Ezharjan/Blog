@@ -1,4 +1,4 @@
-Here is the code written in Python 3 to test Gimbal effect mathematically, based onb the theorital work here mention in this repo:
+Here is the code written in Python 3 to test Gimbal effect mathematically, based onb [the theorital work here](https://ezharjan.github.io/Blog/pre/EularAngle.html) mentioned in this repo:
 
 ```python
 import numpy as np
