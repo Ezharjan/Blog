@@ -1,0 +1,16 @@
+How to have a paper get into SIGGRAPH?
+by Takeo Igarashi, The University of Tokyo
+April 2007
+
+    You must be very competent and dedicated: The smartest researchers around the world are competing each other to get papers into SIGGRAPH. If you think you are not competent or dedicated, forget about SIGGRAPH. It is not a place for you. If you think you are less smart, work even harder to fill the gap.
+    You must forget about everything else and focus on SIGGRAPH: If you pay attention to your personal life or other jobs (classes, management, daily job, etc.), you must understand that SIGGRAPH is far away. You must give abolute proiroty to SIGGRAPH. Devote all of your time to polish your paper and demo to the limit.
+    Pick the most promising research topic: It is crutial to find a good research theme. If you find a good goal, your work is mostly done. If a wrong goal is set, you are destined to fail. The best way is to come up with many possiblities, examine them carefully, and pick the best one. You must list 100 possible research ideas first, carefully investigate the possiblity of 30 of them, implement 10 of them and see how it goes, and pick the most successful one in the end. You must understand that 100 good ideas are discarded in the porcess of producing one SIGGRAPH paper.
+    Show your work to experts and discuss before submission: You will never win if you work alone and do not get any feedback from anybody. Afterall, people (reviewers) decide the fate of your paper and you must understand what they want and what they dislike. You will never get that critical information if you do not talk to them. You must go to conferences and show your ongoing work to experts.You must visit people, show your work, and have a discussion.
+    Start early and revise your implementation and writing many times. The only way to create a good system and good writing is to repeat and polish. It is OK to start with a crappy one. It will eventually transform into a good one through iterative refinement. On the other hand, if you start late, you will never deliver a perfect one in time.
+    Do not give up and try multiple times. SIGGRAPH is so competitive that even very good papers fail each year (almost randomly, depending on the reviewers you get). Even if you submit 10 perfect papers to siggraph, only 5 will probably get in. So it is important to submit a couple of (very good) papers to siggraph and continue to do so for multiple years. Single shot is like betting. No one knows whether you win or not. However, if you continuously submit good papers to siggraph, you will eventually win. 
+
+Sounds too harsh? Maybe. But the result is rewarding.You will present your work in front of hundreds of audience (largest room has over 3000 seats). Proceedings will go to labs and libraries all over the world.Your work will be introduecd and discussed at seminors and classes. Some company might buy your technology and make a product out of it. Chances are high that you will get a nice job offer. Most importantly, you will become a part of the history of computer graphics.
+
+Additional Resouces:"How to get your paper rejected from SIGGRAPH","Good writing"
+
+p.s. I do exaggerate things here. I myself do not do all of these things perfectly. However, if you need some clue,this list might give you some insight. Good luck. 
