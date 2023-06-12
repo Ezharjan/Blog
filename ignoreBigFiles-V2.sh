@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "automatically ignoring large files"
-find . -size 1M | sed 's|^\./||g' >> .gitignore
+find . -size 100M | sed 's|^\./||g' >> .gitignore
 cat .gitignore | sort | uniq > .gitignore
 
 git diff --exit-code .gitignore
