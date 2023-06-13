@@ -188,7 +188,15 @@ du -sh /path/to/folder
 ```
 
 
-20. 
+20. 查看正在执行`main.py`的后台进程（排除grep自身被查出的情况）：
+```bash
+ps -aux|grep main.py| grep -v grep
+```
+
+21. 获取正在执行的`main.py`的后台进程（排除grep自身被查出的情况）的进程号/进程ID：
+```bash
+ps -aux|grep main.py| grep -v grep | awk '{print $2}'
+```
 
 
 <br>
