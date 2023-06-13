@@ -182,7 +182,13 @@ ln -s /absolute/path/to/file.txt shortcut_name
 srun -p gpu_batch --gres=gpu:ID_OF_GPU python xxx
 ```
 
+19. See the size of the folder:
+```bash
+du -sh /path/to/folder
+```
 
+
+20. 
 
 
 <br>
