@@ -233,4 +233,5 @@ squeue -o "%.7i %.9P %.8j %.8u %.2t %.10M %.6D %R"
 <br>
 <br>
 
-[Reference](https://zhuanlan.zhihu.com/p/356415669)
+[Reference1](https://zhuanlan.zhihu.com/p/356415669)
+[Reference2](https://zhuanlan.zhihu.com/p/54903290)
