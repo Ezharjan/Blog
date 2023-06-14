@@ -207,3 +207,30 @@ ps -aux|grep main.py| grep -v grep | awk '{print $2}'
 <br>
 
 作者：艾孜尔江
+
+
+
+# Slurm Commands
+
+1. 显示每个节点上可用的GPU数量、当前使用的GPU数量、节点状态以及其他相关信息:
+```bash
+sinfo -o "%10N %10G %10c %10D %10T %20F" --Node | grep gpu
+
+##节点状态
+#alloc	    idle	   mix	        down      drain
+#节点在用	节点可用	部分占用	节点下线	节点故障
+```
+
+2. 详细地了解每个作业占用的GPU，可以使用以下命令，该命令将显示每个作业的ID、作业名称、用户名、状态、内存使用量、GPU数量以及其他相关信息。：
+```bash
+squeue -o "%.7i %.9P %.8j %.8u %.2t %.10M %.6D %R"
+
+##作业状态
+#R	        PD	        CG	        CD
+#正在运行	正在排队	即将完成	已完成
+```
+
+<br>
+<br>
+
+[Reference](https://zhuanlan.zhihu.com/p/356415669)
