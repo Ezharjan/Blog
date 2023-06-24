@@ -179,7 +179,7 @@ ln -s /absolute/path/to/file.txt shortcut_name
 
 18. 使用slrum集群运行指令在GPU上：
 ```bash
-srun -p gpu_batch --gres=gpu:ID_OF_GPU python xxx
+srun -p gpu_batch --gres=gpu:GPU_COUNT python xxx
 ```
 
 19. See the size of the folder:
