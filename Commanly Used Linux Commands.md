@@ -281,7 +281,11 @@ eval "$(conda shell.bash hook)"
 conda activate env_name
 ```
 
-
+8. Linux无法删除文件夹 Device or resource busy，查看资源占用进程 lsof +d /local/ 显示目录占用的进程
+```bash
+lsof +d /YOUR_DIR_NAME/
+kill -9 PID_FOUND_ABOVE
+```
 
 <br>
 <br>
