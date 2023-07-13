@@ -448,7 +448,91 @@ rpm -qa # 查看所有安装的软件包
 } > computer_info.txt
 ```
 
+11. 批量解压当前目录下所有的zip文件：
+```bash
+ls *.zip | xargs -n1 unzip
+```
 
+12. 安装 tmux ：
+```bash
+
+# Ubuntu 或 Debian
+$ sudo apt-get install tmux
+
+# CentOS 或 Fedora
+$ sudo yum install tmux
+
+```
+
+13. 启动 tmux ：
+```bash
+tmux
+```
+
+
+14. 新建会话，使用编号区分会话，不太直观，更好的方法是为会话起名：
+```bash
+tmux
+tmux new -s <session-name>
+```
+
+15. 分离会话，在 Tmux 窗口中，按下Ctrl+b d或者输入tmux detach命令，就会将当前会话与窗口分离：
+```bash
+tmux detach
+```
+
+16. 查看当前所有的 Tmux 会话：
+```bash
+tmux ls
+```
+
+17. 接入会话，重新接入某个已存在的会话：
+```bash
+# 使用会话编号
+tmux attach -t 0
+
+# 使用会话名称
+tmux attach -t <session-name>
+```
+
+18. 杀死会话：
+```bash
+# 使用会话编号
+tmux kill-session -t 0
+
+# 使用会话名称
+tmux kill-session -t <session-name>
+```
+
+19. 切换会话：
+```bash
+# 使用会话编号
+tmux switch -t 0
+
+# 使用会话名称
+tmux switch -t <session-name>
+```
+
+20. 重命名会话：
+```bash
+tmux rename-session -t 0 <new-name>
+```
+
+21. 会话快捷键：
+```txt
+Ctrl+b d：分离当前会话。
+Ctrl+b s：列出所有会话。
+Ctrl+b $：重命名当前会话。
+```
+
+
+22. tmux 最简操作流程：
+- 新建会话tmux new -s my_session。
+- 在 Tmux 窗口运行所需的程序。
+- 按下快捷键Ctrl+b d将会话分离。
+- 下次使用时，重新连接到会话tmux attach-session -t my_session。
+
+[点此查看更多tmux指令](https://www.ruanyifeng.com/blog/2019/10/tmux.html)。
 
 
 <br>
