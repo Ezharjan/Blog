@@ -1,3 +1,14 @@
+Linux应知应会
+Ezharjan Linux
+Linux Commands
+Linux常用指令合集
+Linux必备指令合集
+
+<br>
+
+---
+
+# Linux Commands
 
 1. 清除登陆系统成功的记录
 
@@ -199,15 +210,68 @@ ps -aux|grep main.py| grep -v grep | awk '{print $2}'
 ```
 
 
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
+22. Linux无法删除文件夹 Device or resource busy，查看资源占用进程 lsof +d /local/ 显示目录占用的进程
+```bash
+lsof +d /YOUR_DIR_NAME/
+kill -9 PID_FOUND_ABOVE
+```
 
-作者：艾孜尔江
+23. 查看Linux主机信息：
+```sh
+uname -a # 查看内核/操作系统/CPU信息
+head -n 1 /etc/issue # 查看操作系统版本
+cat /proc/cpuinfo # 查看CPU信息
+hostname # 查看计算机名
+lspci -tv # 列出所有PCI设备
+lsusb -tv # 列出所有USB设备
+lsmod # 列出加载的内核模块
+env # 查看环境变量 资源
+free -m # 查看内存使用量和交换区使用量
+df -h # 查看各分区使用情况
+du -sh # 查看指定目录的大小
+grep MemTotal /proc/meminfo # 查看内存总量
+grep MemFree /proc/meminfo # 查看空闲内存量
+uptime # 查看系统运行时间、用户数、负载
+cat /proc/loadavg # 查看系统负载 磁盘和分区
+mount | column -t # 查看挂接的分区状态
+fdisk -l # 查看所有分区
+swapon -s # 查看所有交换分区
+hdparm -i /dev/hda # 查看磁盘参数(仅适用于IDE设备)
+dmesg | grep IDE # 查看启动时IDE设备检测状况 网络
+ifconfig # 查看所有网络接口的属性
+iptables -L # 查看防火墙设置
+route -n # 查看路由表
+netstat -lntp # 查看所有监听端口
+netstat -antp # 查看所有已经建立的连接
+netstat -s # 查看网络统计信息 进程
+ps -ef # 查看所有进程
+top # 实时显示进程状态 用户
+w # 查看活动用户
+id # 查看指定用户信息
+last # 查看用户登录日志
+cut -d: -f1 /etc/passwd # 查看系统所有用户
+cut -d: -f1 /etc/group # 查看系统所有组
+crontab -l # 查看当前用户的计划任务 服务
+chkconfig –list # 列出所有系统服务
+chkconfig –list | grep on # 列出所有启动的系统服务 程序
+rpm -qa # 查看所有安装的软件包
+```
 
+
+24.  批量解压当前目录下所有的zip文件：
+```bash
+ls *.zip | xargs -n1 unzip
+```
+
+25. 将命令放到全局：
+```bash
+# 通过软连接的方式链接到/usr/bin/目录下
+sudo ln -s /absolute/path/to/folder/contains/executable/file/ /usr/bin/name_to_execute
+```
+
+
+
+<br>
 
 
 # Slurm Commands
@@ -281,179 +345,20 @@ eval "$(conda shell.bash hook)"
 conda activate env_name
 ```
 
-8. Linux无法删除文件夹 Device or resource busy，查看资源占用进程 lsof +d /local/ 显示目录占用的进程
-```bash
-lsof +d /YOUR_DIR_NAME/
-kill -9 PID_FOUND_ABOVE
-```
 
-9. 查看Linux主机信息：
-```sh
-uname -a # 查看内核/操作系统/CPU信息
-head -n 1 /etc/issue # 查看操作系统版本
-cat /proc/cpuinfo # 查看CPU信息
-hostname # 查看计算机名
-lspci -tv # 列出所有PCI设备
-lsusb -tv # 列出所有USB设备
-lsmod # 列出加载的内核模块
-env # 查看环境变量 资源
-free -m # 查看内存使用量和交换区使用量
-df -h # 查看各分区使用情况
-du -sh # 查看指定目录的大小
-grep MemTotal /proc/meminfo # 查看内存总量
-grep MemFree /proc/meminfo # 查看空闲内存量
-uptime # 查看系统运行时间、用户数、负载
-cat /proc/loadavg # 查看系统负载 磁盘和分区
-mount | column -t # 查看挂接的分区状态
-fdisk -l # 查看所有分区
-swapon -s # 查看所有交换分区
-hdparm -i /dev/hda # 查看磁盘参数(仅适用于IDE设备)
-dmesg | grep IDE # 查看启动时IDE设备检测状况 网络
-ifconfig # 查看所有网络接口的属性
-iptables -L # 查看防火墙设置
-route -n # 查看路由表
-netstat -lntp # 查看所有监听端口
-netstat -antp # 查看所有已经建立的连接
-netstat -s # 查看网络统计信息 进程
-ps -ef # 查看所有进程
-top # 实时显示进程状态 用户
-w # 查看活动用户
-id # 查看指定用户信息
-last # 查看用户登录日志
-cut -d: -f1 /etc/passwd # 查看系统所有用户
-cut -d: -f1 /etc/group # 查看系统所有组
-crontab -l # 查看当前用户的计划任务 服务
-chkconfig –list # 列出所有系统服务
-chkconfig –list | grep on # 列出所有启动的系统服务 程序
-rpm -qa # 查看所有安装的软件包
-```
 
-10. 查看Linux主机信息并将所有信息打印到一个名为computer_info.txt的文件里：
-```shell
-#!/bin/bash
+<br>
+<br>
 
-# 执行命令并将输出重定向到文件
-{
-  echo "===== uname -a ====="
-  uname -a
+[Download Andoconda](https://www.anaconda.com/)
 
-  echo "===== /etc/issue ====="
-  head -n 1 /etc/issue
 
-  echo "===== /proc/cpuinfo ====="
-  cat /proc/cpuinfo
 
-  echo "===== hostname ====="
-  hostname
+<br>
 
-  echo "===== lspci -tv ====="
-  lspci -tv
+# Tmux Commands
 
-  echo "===== lsusb -tv ====="
-  lsusb -tv
-
-  echo "===== lsmod ====="
-  lsmod
-
-  echo "===== env ====="
-  env
-
-  echo "===== free -m ====="
-  free -m
-
-  echo "===== df -h ====="
-  df -h
-
-  echo "===== du -sh ====="
-  du -sh
-
-  echo "===== grep MemTotal /proc/meminfo ====="
-  grep MemTotal /proc/meminfo
-
-  echo "===== grep MemFree /proc/meminfo ====="
-  grep MemFree /proc/meminfo
-
-  echo "===== uptime ====="
-  uptime
-
-  echo "===== cat /proc/loadavg ====="
-  cat /proc/loadavg
-
-  echo "===== mount | column -t ====="
-  mount | column -t
-
-  echo "===== fdisk -l ====="
-  fdisk -l
-
-  echo "===== swapon -s ====="
-  swapon -s
-
-  echo "===== hdparm -i /dev/hda ====="
-  hdparm -i /dev/hda
-
-  echo "===== dmesg | grep IDE ====="
-  dmesg | grep IDE
-
-  echo "===== ifconfig ====="
-  ifconfig
-
-  echo "===== iptables -L ====="
-  iptables -L
-
-  echo "===== route -n ====="
-  route -n
-
-  echo "===== netstat -lntp ====="
-  netstat -lntp
-
-  echo "===== netstat -antp ====="
-  netstat -antp
-
-  echo "===== netstat -s ====="
-  netstat -s
-
-  echo "===== ps -ef ====="
-  ps -ef
-
-  echo "===== top ====="
-  top
-
-  echo "===== w ====="
-  w
-
-  echo "===== id ====="
-  id
-
-  echo "===== last ====="
-  last
-
-  echo "===== cut -d: -f1 /etc/passwd ====="
-  cut -d: -f1 /etc/passwd
-
-  echo "===== cut -d: -f1 /etc/group ====="
-  cut -d: -f1 /etc/group
-
-  echo "===== crontab -l ====="
-  crontab -l
-
-  echo "===== chkconfig --list ====="
-  chkconfig --list
-
-  echo "===== chkconfig --list | grep on ====="
-  chkconfig --list | grep on
-
-  echo "===== rpm -qa ====="
-  rpm -qa
-
-} > computer_info.txt
-```
-
-11. 批量解压当前目录下所有的zip文件：
-```bash
-ls *.zip | xargs -n1 unzip
-```
-
-12. 安装 tmux ：
+1. 安装 tmux ：
 ```bash
 
 # Ubuntu 或 Debian
@@ -464,29 +369,29 @@ $ sudo yum install tmux
 
 ```
 
-13. 启动 tmux ：
+2. 启动 tmux ：
 ```bash
 tmux
 ```
 
 
-14. 新建会话，使用编号区分会话，不太直观，更好的方法是为会话起名：
+3. 新建会话，使用编号区分会话，不太直观，更好的方法是为会话起名：
 ```bash
 tmux
 tmux new -s <session-name>
 ```
 
-15. 分离会话，在 Tmux 窗口中，按下Ctrl+b d或者输入tmux detach命令，就会将当前会话与窗口分离：
+4. 分离会话，在 Tmux 窗口中，按下Ctrl+b d或者输入tmux detach命令，就会将当前会话与窗口分离：
 ```bash
 tmux detach
 ```
 
-16. 查看当前所有的 Tmux 会话：
+5. 查看当前所有的 Tmux 会话：
 ```bash
 tmux ls
 ```
 
-17. 接入会话，重新接入某个已存在的会话：
+6. 接入会话，重新接入某个已存在的会话：
 ```bash
 # 使用会话编号
 tmux attach -t 0
@@ -495,7 +400,7 @@ tmux attach -t 0
 tmux attach -t <session-name>
 ```
 
-18. 杀死会话：
+7. 杀死会话：
 ```bash
 # 使用会话编号
 tmux kill-session -t 0
@@ -504,7 +409,7 @@ tmux kill-session -t 0
 tmux kill-session -t <session-name>
 ```
 
-19. 切换会话：
+8. 切换会话：
 ```bash
 # 使用会话编号
 tmux switch -t 0
@@ -513,12 +418,12 @@ tmux switch -t 0
 tmux switch -t <session-name>
 ```
 
-20. 重命名会话：
+9. 重命名会话：
 ```bash
 tmux rename-session -t 0 <new-name>
 ```
 
-21. 会话快捷键：
+10. 会话快捷键：
 ```txt
 Ctrl+b d：分离当前会话。
 Ctrl+b s：列出所有会话。
@@ -526,7 +431,7 @@ Ctrl+b $：重命名当前会话。
 ```
 
 
-22. tmux 最简操作流程：
+11. tmux 最简操作流程：
 - 新建会话tmux new -s my_session。
 - 在 Tmux 窗口运行所需的程序。
 - 按下快捷键Ctrl+b d将会话分离。
@@ -535,55 +440,107 @@ Ctrl+b $：重命名当前会话。
 [点此查看更多tmux指令](https://www.ruanyifeng.com/blog/2019/10/tmux.html)。
 
 
-23. Git 暂存当前内容：
+<br>
+
+
+# Git Commands
+
+1. Git 暂存当前内容：
 ```bash
 git stash save [stashMessage]
 ```
 
-24. 取出之前储藏的修改：
+2. 取出之前储藏的修改：
 ```bash
 git stash pop
 ```
 
-25. 查看储藏记录列表：
+3. 查看储藏记录列表：
 ```bash
 git stash list
 ```
 
-26. 取出指定index的储藏的修改到工作区中：
+4. 取出指定index的储藏的修改到工作区中：
 ```bash
 git stash apply stash@{index} 
 ```
 
-27. 将指定index的储藏从储藏记录列表中删除：
+5. 将指定index的储藏从储藏记录列表中删除：
 ```bash
 git stash drop stash@{index}
 ```
 
-28. 将命令放到全局：
+6. 新建分支
 ```bash
-# 通过软连接的方式链接到/usr/bin/目录下
-sudo ln -s /absolute/path/to/folder/contains/executable/file/ /usr/bin/name_to_execute
+git branch xxx (xxx填写你的分支名称)
 ```
 
-29. 
+7. 查看所有分支
 ```bash
-
+git branch -a
 ```
 
-30. 
-```bash
 
+8. 切换到某一分支
+```bash
+git checkout xxx (xxx填写要切换的分支名称）
 ```
 
-31. d 
+
+9. 添加修改代码到缓存，注意最后的"."前面有个空格
 ```bash
+git add .
 ```
 
-<br>
-<br>
+10. 添加提交代码的备注
+```bash
+git commit -m "xxx" （xxx为本次提交代码的备注）
+```
 
-[Download Andoconda](https://www.anaconda.com/)
+11. 提交代码到指定分支
+```bash
+git push origin xxx （xxx为要提交代码的分支名称）
+```
+
+12. 撤销所有本次未提交的修改（相当于Tortoise Git的revert按钮）：
+```bash
+git checkout . 
+```
+
+13. 恢复某个已修改的文件（撤销未提交的修改）：
+```bash
+git checkout file-name
+```
+
+14. 撤销某次操作，此次操作之前和之后的commit和history都会保留，并且把这次撤销（git revert是提交一个新的版本，将需要revert的版本的内容再反向修改回去，版本会递增，不影响之前提交的内容）：
+```bash
+ git revert HEAD                  # 撤销前一次 commit
+ git revert HEAD^                   # 撤销前前一次 commit
+ git revert commit-id
+ #（比如：fa042ce57ebbe5bb9c8db709f719cec2c58ee7ff）撤销指定的版本，撤销也会作为一次提交进行保存。
+```
+
+15. 返回到某个节点，不保留本次所操作的修改：
+```bash
+git reset --hard HASH
+```
+
+16. 返回到某个节点，保留本次所操作的修改：
+```bash
+git reset --soft HASH
+```
+
+17. 把所有没有提交的修改暂存到stash里面（可用 git stash pop 恢复）：
+```bash
+git stash
+```
+
+18. 查看所有的历史版本：
+```bash
+git log
+```
+
+
 
 
 <br>
