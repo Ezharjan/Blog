@@ -535,7 +535,62 @@ Ctrl+b $：重命名当前会话。
 [点此查看更多tmux指令](https://www.ruanyifeng.com/blog/2019/10/tmux.html)。
 
 
+23. Git 暂存当前内容：
+```bash
+git stash save [stashMessage]
+```
+
+24. 取出之前储藏的修改：
+```bash
+git stash pop
+```
+
+25. 查看储藏记录列表：
+```bash
+git stash list
+```
+
+26. 取出指定index的储藏的修改到工作区中：
+```bash
+git stash apply stash@{index} 
+```
+
+27. 将指定index的储藏从储藏记录列表中删除：
+```bash
+git stash drop stash@{index}
+```
+
+28. 将命令放到全局：
+```bash
+# 通过软连接的方式链接到/usr/bin/目录下
+sudo ln -s /absolute/path/to/folder/contains/executable/file/ /usr/bin/name_to_execute
+```
+
+29. 
+```bash
+
+```
+
+30. 
+```bash
+
+```
+
+31. d 
+```bash
+```
+
 <br>
 <br>
 
 [Download Andoconda](https://www.anaconda.com/)
+
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+作者：艾孜尔江
