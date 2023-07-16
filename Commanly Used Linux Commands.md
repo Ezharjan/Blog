@@ -345,6 +345,18 @@ eval "$(conda shell.bash hook)"
 conda activate env_name
 ```
 
+8. Create Conda environment via existing `environment.yml`:
+```bash
+conda env create -f environment.yml
+```
+
+9. Store configuration of the current Conda environment into a file.
+```bash
+conda env export > environment.yml
+```
+
+
+ 
 
 
 <br>
