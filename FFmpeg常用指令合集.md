@@ -176,20 +176,27 @@ ffmpeg -i out.mp4 -f image2 -vf fps=fps=1/20 out%d.png
 ffmpeg -i out.mp4 out%4d.png
 ```
 
-21. 分割视频，截取视频的指定部分（下放例子是截图前20分59秒），输出out.mp4文件：
+21. **分割视频，截取视频的指定部分（下放例子是截图前20分59秒），输出out.mp4文件**
 ```bash
 ffmpeg -ss 00:00:00 -i src.mp4 -c copy -t 00:20:59 out.mp4
 ```
 
-22. 加速整个视频（含音频）到2倍速：
+22. **加速整个视频（含音频）到2倍速**
 ```
 ffmpeg -i input.mkv -filter_complex "[0:v]setpts=0.5*PTS[v];[0:a]atempo=2[a]" -map "[v]" -map "[a]" output.mkv
 ```
 
-这里的“0.5”控制了倍速的倍数。也可以用下方指令， X表示倍速率：
+**这里的“0.5”控制了倍速的倍数。也可以用下方指令， X表示倍速率：**
 
 ```
 ffmpeg -i input.mp4 -filter_complex "[0:v]setpts=PTS/X[v];[0:a]atempo=2[a]" -map "[v]" -map "[a]" output.mp4
+```
+
+
+
+23. **使用ffmpeg去除视频中的音频**
+```
+ffmpeg -i .\\input.mp4 -map 0:0 -vcodec copy out.mp4
 ```
 
 
