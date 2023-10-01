@@ -25,6 +25,10 @@ Taskkill /IM "process name" /F
 Taskkill /F /PID pid_number
 ```
 
+5. Run CMD as administrator:
+   - Press Windows + R, type cmd in Run box, and press `Ctrl + Shift + Enter` to run Command Prompt as administrator.
+
+
 
 <br>
 
