@@ -1,0 +1,1417 @@
+<!DOCTYPE html>
+<html lang=zh class=itcauecng data-theme=light data-rh=data-theme style>
+<meta charset=utf-8>
+<title>机器学习中怎样评估分类模型的效果？</title>
+<meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name=renderer content=webkit>
+<meta name=force-rendering content=webkit>
+<meta http-equiv=X-UA-Compatible content="IE=10,chrome=1">
+<meta name=google-site-verification content=FTeR0c8arOPKh8c5DYh_9uu98_zJbaWw53J-Sch9MTg>
+<meta data-rh=true name=keywords content=逻辑回归,混淆矩阵,机器学习>
+<meta data-rh=true name=description
+    content="在现实生活中，许多事件的发生都是具有随机性的，比如我们无法准确确定股价涨跌、天气变化情况等，而只能通过概率来推测事件发生的可能性。 在机器学习中，逻辑回归是一种计算概率的有效机制，逻辑回归模型可以预…">
+<meta data-rh=true property=og:title content=机器学习中怎样评估分类模型的效果？>
+<meta data-rh=true property=og:url content=https://zhuanlan.zhihu.com/p/404249754>
+<meta data-rh=true property=og:description
+    content="在现实生活中，许多事件的发生都是具有随机性的，比如我们无法准确确定股价涨跌、天气变化情况等，而只能通过概率来推测事件发生的可能性。 在机器学习中，逻辑回归是一种计算概率的有效机制，逻辑回归模型可以预…">
+<meta data-rh=true property=og:image
+    content="https://picx.zhimg.com/v2-200f4c432999afde52484a2b12abb834_720w.jpg?source=172ae18b">
+<meta data-rh=true property=og:type content=article>
+<meta data-rh=true property=og:site_name content=知乎专栏>
+<link crossorigin rel=search type=application/opensearchdescription+xml href=https://static.zhihu.com/heifetz/search.xml
+    title=知乎>
+<style data-emotion=css>
+    .Button::-moz-focus-inner {
+        border: 0;
+        padding: 0
+    }
+
+    .Button:focus {
+        outline: none;
+        -webkit-transition: -webkit-box-shadow .3s;
+        transition: -webkit-box-shadow .3s;
+        transition: box-shadow .3s;
+        transition: box-shadow .3s, -webkit-box-shadow .3s
+    }
+
+    .Button:disabled {
+        cursor: default;
+        opacity: .5;
+        pointer-events: none
+    }
+
+    .Button--plain {
+        background-color: transparent
+    }
+
+    .Button--link:hover,
+    .Button--plain:hover {
+        background-color: transparent
+    }
+
+    .Button--plain:hover {
+        color: #75869a
+    }
+
+    @-webkit-keyframes spring-in {
+        0% {
+            opacity: .01;
+            -webkit-transform: translate(-50%, -20px);
+            transform: translate(-50%, -20px)
+        }
+
+        to {
+            opacity: 1;
+            -webkit-transform: translate(-50%);
+            transform: translate(-50%)
+        }
+    }
+
+    @keyframes spring-in {
+        0% {
+            opacity: .01;
+            -webkit-transform: translate(-50%, -20px);
+            transform: translate(-50%, -20px)
+        }
+
+        to {
+            opacity: 1;
+            -webkit-transform: translate(-50%);
+            transform: translate(-50%)
+        }
+    }
+
+    @-webkit-keyframes spring-out {
+        0% {
+            opacity: 1;
+            -webkit-transform: translate(-50%);
+            transform: translate(-50%)
+        }
+
+        to {
+            opacity: 0;
+            -webkit-transform: translate(-50%, -20px);
+            transform: translate(-50%, -20px)
+        }
+    }
+
+    @keyframes spring-out {
+        0% {
+            opacity: 1;
+            -webkit-transform: translate(-50%);
+            transform: translate(-50%)
+        }
+
+        to {
+            opacity: 0;
+            -webkit-transform: translate(-50%, -20px);
+            transform: translate(-50%, -20px)
+        }
+    }
+
+    .Popover {
+        display: inline-block;
+        position: relative
+    }
+
+    .Input-wrapper {
+        -webkit-box-align: center;
+        -ms-flex-align: center;
+        align-items: center;
+        background: #fff;
+        border: 1px solid #ebebeb;
+        border-radius: 3px;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        font-size: 14px;
+        height: 34px;
+        padding: 4px 10px;
+        position: relative;
+        -webkit-transition: background .2s, border .2s;
+        transition: background .2s, border .2s;
+        width: 180px
+    }
+
+    .Input {
+        -webkit-box-flex: 1;
+        background: transparent;
+        border: none;
+        -ms-flex: 1 1;
+        flex: 1 1;
+        font-family: inherit;
+        font-size: inherit;
+        font-weight: inherit;
+        overflow: hidden;
+        padding: 0;
+        resize: none
+    }
+
+    .Input:disabled {
+        color: #bfbfbf
+    }
+
+    .Input:focus {
+        outline: none
+    }
+
+    input.Input {
+        color: #121212;
+        height: 24px;
+        line-height: 24px
+    }
+
+    .Input:not(input) {
+        line-height: 24px
+    }
+
+    .Input::-moz-placeholder {
+        color: #8493a5
+    }
+
+    .Input::-webkit-input-placeholder {
+        color: #8493a5
+    }
+
+    .Input::placeholder {
+        color: #8493a5
+    }
+
+    .ztext>:first-child {
+        margin-top: 0
+    }
+
+    .ztext>:last-child {
+        margin-bottom: 0
+    }
+
+    .ztext h2 {
+        font-synthesis: style
+    }
+
+    .ztext b {
+        font-synthesis: style
+    }
+
+    .ztext p.ztext-empty-paragraph {
+        margin: -.8em 0
+    }
+
+    .ztext .origin_image.zh-lightbox-thumb {
+        cursor: -webkit-zoom-in
+    }
+
+    @supports not ((-webkit-backdrop-filter:blur(16px)) or (backdrop-filter:blur(16px))) {
+        .VideoCardPlayButton-withFileSize--outer .VideoCardPlayButton-withFileSize {
+            background-color: hsla(0, 0%, 7%, .8)
+        }
+    }
+
+    @-webkit-keyframes mu-rotate {
+        0% {
+            transform: rotate(0deg)
+        }
+
+        to {
+            transform: rotate(1turn)
+        }
+    }
+
+    @keyframes mu-rotate {
+        0% {
+            transform: rotate(0deg)
+        }
+
+        to {
+            transform: rotate(1turn)
+        }
+    }
+
+    @-webkit-keyframes CircleLoadingBarRotator {
+        0% {
+            -webkit-transform: rotate(0deg);
+            transform: rotate(0deg)
+        }
+
+        to {
+            -webkit-transform: rotate(270deg);
+            transform: rotate(270deg)
+        }
+    }
+
+    @keyframes CircleLoadingBarRotator {
+        0% {
+            -webkit-transform: rotate(0deg);
+            transform: rotate(0deg)
+        }
+
+        to {
+            -webkit-transform: rotate(270deg);
+            transform: rotate(270deg)
+        }
+    }
+
+    @-webkit-keyframes CircleLoadingBarDash {
+        0% {
+            stroke-dashoffset: 187
+        }
+
+        50% {
+            stroke-dashoffset: 46.75;
+            -webkit-transform: rotate(135deg);
+            transform: rotate(135deg)
+        }
+
+        to {
+            stroke-dashoffset: 187;
+            -webkit-transform: rotate(450deg);
+            transform: rotate(450deg)
+        }
+    }
+
+    @keyframes CircleLoadingBarDash {
+        0% {
+            stroke-dashoffset: 187
+        }
+
+        50% {
+            stroke-dashoffset: 46.75;
+            -webkit-transform: rotate(135deg);
+            transform: rotate(135deg)
+        }
+
+        to {
+            stroke-dashoffset: 187;
+            -webkit-transform: rotate(450deg);
+            transform: rotate(450deg)
+        }
+    }
+
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, Helvetica Neue, PingFang SC, Microsoft YaHei, Source Han Sans SC, Noto Sans CJK SC, WenQuanYi Micro Hei, sans-serif
+    }
+
+    button {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        font: inherit;
+        outline: none
+    }
+
+    body,
+    button {
+        margin: 0
+    }
+
+    h1,
+    h2 {
+        font: inherit;
+        margin: 0
+    }
+
+    a {
+        color: inherit;
+        text-decoration: none
+    }
+
+    .CornerAnimayedFlex {
+        -webkit-transition: height .2s ease;
+        transition: height .2s ease;
+        width: 40px
+    }
+
+    .CornerAnimayedFlex--hidden {
+        height: 0
+    }
+
+    .CornerButtons {
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+        bottom: 0;
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        position: fixed;
+        right: 12px
+    }
+
+    body {
+        color: #121212
+    }
+
+    body {
+        -webkit-tap-highlight-color: rgba(18, 18, 18, 0)
+    }
+
+    .WhiteBg-body {
+        background: #fff
+    }
+
+    .App-main {
+        padding-bottom: 46px
+    }
+
+    @media (max-width:690px) {
+        body {
+            background: #fff
+        }
+
+        .App-main {
+            padding: 0
+        }
+    }
+
+    .ColumnPageHeader-Wrapper {
+        width: 100%
+    }
+
+    .AuthorInfo {
+        -webkit-box-align: center;
+        -ms-flex-align: center;
+        -webkit-box-pack: justify;
+        -ms-flex-pack: justify;
+        align-items: center;
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        justify-content: space-between;
+        max-width: 654px;
+        position: relative
+    }
+
+    .LabelContainer-wrapper {
+        margin: 16px 0
+    }
+
+    .LabelContainer-wrapper:empty {
+        margin: 0
+    }
+
+    @-webkit-keyframes Post-SideActions-spread {
+        0% {
+            opacity: 1;
+            -webkit-transform: scale(1);
+            transform: scale(1)
+        }
+
+        to {
+            opacity: 0;
+            -webkit-transform: scale(1.8);
+            transform: scale(1.8)
+        }
+    }
+
+    @keyframes Post-SideActions-spread {
+        0% {
+            opacity: 1;
+            -webkit-transform: scale(1);
+            transform: scale(1)
+        }
+
+        to {
+            opacity: 0;
+            -webkit-transform: scale(1.8);
+            transform: scale(1.8)
+        }
+    }
+
+    .Post-Author {
+        -webkit-box-align: center;
+        -ms-flex-align: center;
+        align-items: center;
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex
+    }
+
+    .Post-Author .AuthorInfo {
+        -webkit-box-flex: 1;
+        -ms-flex: 1 1;
+        flex: 1 1;
+        overflow: hidden;
+        white-space: nowrap
+    }
+
+    @-webkit-keyframes slideInUp {
+        0% {
+            -webkit-transform: translate3d(0, 100%, 0);
+            transform: translate3d(0, 100%, 0);
+            visibility: visible
+        }
+
+        to {
+            -webkit-transform: translateZ(0);
+            transform: translateZ(0)
+        }
+    }
+
+    @keyframes slideInUp {
+        0% {
+            -webkit-transform: translate3d(0, 100%, 0);
+            transform: translate3d(0, 100%, 0);
+            visibility: visible
+        }
+
+        to {
+            -webkit-transform: translateZ(0);
+            transform: translateZ(0)
+        }
+    }
+
+    @-webkit-keyframes fsFadeIn {
+        0% {
+            opacity: 0
+        }
+
+        to {
+            opacity: 1
+        }
+    }
+
+    @keyframes fsFadeIn {
+        0% {
+            opacity: 0
+        }
+
+        to {
+            opacity: 1
+        }
+    }
+
+    @-webkit-keyframes fsFadeOut {
+        0% {
+            opacity: 1
+        }
+
+        to {
+            opacity: 0
+        }
+    }
+
+    @keyframes fsFadeOut {
+        0% {
+            opacity: 1
+        }
+
+        to {
+            opacity: 0
+        }
+    }
+
+    @-webkit-keyframes fsSlideUp {
+        0% {
+            opacity: 0;
+            -webkit-transform: translateY(40px);
+            transform: translateY(40px)
+        }
+
+        to {
+            opacity: 1;
+            -webkit-transform: translateY(0);
+            transform: translateY(0)
+        }
+    }
+
+    @keyframes fsSlideUp {
+        0% {
+            opacity: 0;
+            -webkit-transform: translateY(40px);
+            transform: translateY(40px)
+        }
+
+        to {
+            opacity: 1;
+            -webkit-transform: translateY(0);
+            transform: translateY(0)
+        }
+    }
+
+    @-webkit-keyframes fsSlideDown {
+        0% {
+            opacity: 1;
+            -webkit-transform: translateY(0);
+            transform: translateY(0)
+        }
+
+        to {
+            opacity: 0;
+            -webkit-transform: translateY(40px);
+            transform: translateY(40px)
+        }
+    }
+
+    @keyframes fsSlideDown {
+        0% {
+            opacity: 1;
+            -webkit-transform: translateY(0);
+            transform: translateY(0)
+        }
+
+        to {
+            opacity: 0;
+            -webkit-transform: translateY(40px);
+            transform: translateY(40px)
+        }
+    }
+
+    .Post-RichTextContainer {
+        position: relative
+    }
+
+    .Post-NormalMain>.Post-RichTextContainer {
+        overflow: visible
+    }
+
+    .Post-content {
+        background: #fff
+    }
+
+    .Post-content {
+        min-width: 1000px
+    }
+
+    .Post-NormalMain>div {
+        margin: 0 auto;
+        width: 690px
+    }
+
+    .Post-NormalMain .Post-Header {
+        margin: 0 auto;
+        width: 690px
+    }
+
+    .Post-Main {
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box
+    }
+
+    .Post-Main:focus {
+        outline: none
+    }
+
+    .Post-Main .Post-Title {
+        font-synthesis: style;
+        font-weight: 600
+    }
+
+    .Post-Main .Post-Title {
+        word-wrap: break-word;
+        font-size: 24px;
+        line-height: 1.22;
+        margin: 24px 0
+    }
+
+    @media (max-width:690px) {
+        .Post-Main .Post-Title {
+            margin: 16px 0
+        }
+    }
+
+    @-webkit-keyframes WriteIndexLoading {
+        0% {
+            -webkit-transform: rotate(0);
+            transform: rotate(0)
+        }
+
+        to {
+            -webkit-transform: rotate(1turn);
+            transform: rotate(1turn)
+        }
+    }
+
+    @keyframes WriteIndexLoading {
+        0% {
+            -webkit-transform: rotate(0);
+            transform: rotate(0)
+        }
+
+        to {
+            -webkit-transform: rotate(1turn);
+            transform: rotate(1turn)
+        }
+    }
+
+    @-webkit-keyframes spinnerBladeFade {
+        0% {
+            opacity: .85
+        }
+
+        50% {
+            opacity: .25
+        }
+
+        to {
+            opacity: .25
+        }
+    }
+
+    @keyframes spinnerBladeFade {
+        0% {
+            opacity: .85
+        }
+
+        50% {
+            opacity: .25
+        }
+
+        to {
+            opacity: .25
+        }
+    }
+
+    img:not([src]),
+    img[src=""] {
+        opacity: 0
+    }
+
+    @-webkit-keyframes skeleton-wave {
+        0% {
+            -webkit-transform: translateX(-8000%);
+            transform: translateX(-8000%)
+        }
+
+        to {
+            -webkit-transform: translateX(10000%);
+            transform: translateX(10000%)
+        }
+    }
+
+    @keyframes skeleton-wave {
+        0% {
+            -webkit-transform: translateX(-8000%);
+            transform: translateX(-8000%)
+        }
+
+        to {
+            -webkit-transform: translateX(10000%);
+            transform: translateX(10000%)
+        }
+    }
+
+    @-webkit-keyframes linear-double {
+        0% {
+            -webkit-transform: translateX(-56%);
+            transform: translateX(-56%)
+        }
+
+        to {
+            -webkit-transform: translateX(56%);
+            transform: translateX(56%)
+        }
+    }
+
+    @keyframes linear-double {
+        0% {
+            -webkit-transform: translateX(-56%);
+            transform: translateX(-56%)
+        }
+
+        to {
+            -webkit-transform: translateX(56%);
+            transform: translateX(56%)
+        }
+    }
+
+    @-webkit-keyframes Bounce {
+
+        0%,
+        to {
+            -webkit-transform: translateY(-100%);
+            transform: translateY(-100%)
+        }
+
+        50% {
+            -webkit-transform: translateY(100%);
+            transform: translateY(100%)
+        }
+    }
+
+    @keyframes Bounce {
+
+        0%,
+        to {
+            -webkit-transform: translateY(-100%);
+            transform: translateY(-100%)
+        }
+
+        50% {
+            -webkit-transform: translateY(100%);
+            transform: translateY(100%)
+        }
+    }
+
+    @-webkit-keyframes linear-double {
+        0% {
+            -webkit-transform: translateX(-56%);
+            transform: translateX(-56%)
+        }
+
+        to {
+            -webkit-transform: translateX(56%);
+            transform: translateX(56%)
+        }
+    }
+
+    @keyframes linear-double {
+        0% {
+            -webkit-transform: translateX(-56%);
+            transform: translateX(-56%)
+        }
+
+        to {
+            -webkit-transform: translateX(56%);
+            transform: translateX(56%)
+        }
+    }
+
+    @-webkit-keyframes Bounce {
+
+        0%,
+        to {
+            -webkit-transform: translateY(-100%);
+            transform: translateY(-100%)
+        }
+
+        50% {
+            -webkit-transform: translateY(100%);
+            transform: translateY(100%)
+        }
+    }
+
+    @keyframes Bounce {
+
+        0%,
+        to {
+            -webkit-transform: translateY(-100%);
+            transform: translateY(-100%)
+        }
+
+        50% {
+            -webkit-transform: translateY(100%);
+            transform: translateY(100%)
+        }
+    }
+
+    @-webkit-keyframes linear-double {
+        0% {
+            -webkit-transform: translateX(-56%);
+            transform: translateX(-56%)
+        }
+
+        to {
+            -webkit-transform: translateX(56%);
+            transform: translateX(56%)
+        }
+    }
+
+    @keyframes linear-double {
+        0% {
+            -webkit-transform: translateX(-56%);
+            transform: translateX(-56%)
+        }
+
+        to {
+            -webkit-transform: translateX(56%);
+            transform: translateX(56%)
+        }
+    }
+
+    @-webkit-keyframes LoadingBarForward {
+        0% {
+            -webkit-transform: translateX(-100%);
+            transform: translateX(-100%)
+        }
+
+        40% {
+            -webkit-transform: translateX(0);
+            transform: translateX(0)
+        }
+
+        60% {
+            -webkit-transform: translateX(0);
+            transform: translateX(0)
+        }
+
+        to {
+            -webkit-transform: translateX(100%);
+            transform: translateX(100%)
+        }
+    }
+
+    @keyframes LoadingBarForward {
+        0% {
+            -webkit-transform: translateX(-100%);
+            transform: translateX(-100%)
+        }
+
+        40% {
+            -webkit-transform: translateX(0);
+            transform: translateX(0)
+        }
+
+        60% {
+            -webkit-transform: translateX(0);
+            transform: translateX(0)
+        }
+
+        to {
+            -webkit-transform: translateX(100%);
+            transform: translateX(100%)
+        }
+    }
+
+    @-webkit-keyframes fxRichTextFadeIn {
+        0% {
+            opacity: 0
+        }
+
+        to {
+            opacity: 1
+        }
+    }
+
+    @keyframes fxRichTextFadeIn {
+        0% {
+            opacity: 0
+        }
+
+        to {
+            opacity: 1
+        }
+    }
+
+    .RichText .lazy[data-lazy-status=ok] {
+        -webkit-animation: fxRichTextFadeIn .5s ease-in
+    }
+
+    .Editable-languageSuggestions {
+        position: fixed;
+        z-index: 1
+    }
+
+    .Editable-languageSuggestionsInput {
+        cursor: pointer
+    }
+
+    .Editable-languageSuggestionsInput input {
+        cursor: inherit
+    }
+
+    .Editable-languageSuggestionsInput input:focus {
+        cursor: text
+    }
+
+    .css-78p1r9 {
+        box-sizing: border-box;
+        margin: 0;
+        min-width: 0;
+        margin-left: auto;
+        margin-right: auto;
+        max-width: 690px;
+        margin-top: 0
+    }
+
+    @media screen and (min-width:40em) {
+        .css-78p1r9 {
+            margin-top: 1em
+        }
+    }
+
+    .css-1yuhvjn {
+        margin-top: 16px
+    }
+
+    .css-376mun {
+        position: relative;
+        display: inline
+    }
+
+    .css-117anjg {
+        word-break: break-word;
+        line-height: 1.6
+    }
+
+    .css-117anjg>[data-first-child] {
+        margin-top: 0
+    }
+
+    .css-117anjg>:last-child {
+        margin-bottom: 0
+    }
+
+    .css-117anjg h2 {
+        clear: left;
+        margin-top: calc((1.4em*2)/1.2);
+        margin-bottom: calc(1.4em/1.2);
+        font-size: 1.2em;
+        line-height: 1.5;
+        font-weight: 600
+    }
+
+    .css-117anjg b {
+        font-weight: 600
+    }
+
+    .css-117anjg p {
+        margin: 1.4em 0
+    }
+
+    .css-117anjg figure {
+        margin: 1.4em 0
+    }
+
+    .css-117anjg figure .content_image,
+    .css-117anjg figure .origin_image {
+        margin: 0 auto
+    }
+
+    .css-117anjg .content_image,
+    .css-117anjg .origin_image {
+        display: block;
+        height: auto
+    }
+
+    .css-117anjg .origin_image.zh-lightbox-thumb {
+        cursor: -webkit-zoom-in;
+        cursor: -moz-zoom-in;
+        cursor: zoom-in
+    }
+
+    .css-117anjg table[data-draft-type="table"] {
+        border-collapse: collapse;
+        font-size: 15px;
+        margin: 1.4em auto;
+        max-width: 100%;
+        table-layout: fixed;
+        text-align: left;
+        width: 100%
+    }
+
+    .css-117anjg table[data-draft-type="table"] td {
+        border: 1px solid #d1d1d1;
+        line-height: 24px;
+        height: 24px;
+        padding: 3px 12px
+    }
+
+    .css-117anjg .lazy[data-lazy-status="ok"] {
+        background-color: transparent;
+        -webkit-animation: animation-1yvu044 0.5s ease-in;
+        animation: animation-1yvu044 0.5s ease-in
+    }
+
+    .css-117anjg img.content_image[data-size="normal"],
+    .css-117anjg img.origin_image[data-size="normal"] {
+        width: 100%;
+        max-width: 100%
+    }
+
+    @-webkit-keyframes animation-1yvu044 {
+        from {
+            opacity: 0
+        }
+
+        to {
+            opacity: 1
+        }
+    }
+
+    @keyframes animation-1yvu044 {
+        from {
+            opacity: 0
+        }
+
+        to {
+            opacity: 1
+        }
+    }
+
+    .css-89d6kn {
+        padding: 0px;
+        font-size: 14px;
+        line-height: inherit;
+        text-align: center;
+        cursor: pointer;
+        border: medium;
+        display: flex;
+        -moz-box-align: center;
+        align-items: center;
+        -moz-box-pack: center;
+        justify-content: center;
+        background: rgb(255, 255, 255);
+        border-radius: 4px;
+        width: 40px;
+        height: 40px;
+        color: rgb(132, 147, 165);
+        box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px
+    }
+
+    .css-89d6kn:focus {
+        outline: none;
+        transition: box-shadow 0.3s ease 0s
+    }
+
+    .css-89d6kn:focus-visible {
+        box-shadow: rgb(255, 255, 255) 0px 0px 0px 2px, rgba(5, 109, 232, 0.3) 0px 0px 0px 4px
+    }
+
+    .css-89d6kn:disabled {
+        cursor: default;
+        opacity: 0.5
+    }
+
+    .css-89d6kn:hover {
+        background: rgb(209, 209, 209)
+    }
+
+    .css-8pdeid {
+        position: absolute;
+        top: 0px;
+        height: 1200px
+    }
+
+    @keyframes animation-p6x5s9 {
+        0% {
+            transform: translateX(-100%)
+        }
+
+        40% {
+            transform: translateX(0px)
+        }
+
+        60% {
+            transform: translateX(0px)
+        }
+
+        100% {
+            transform: translateX(100%)
+        }
+    }
+
+    @keyframes animation-p6x5s9 {
+        0% {
+            transform: translateX(-100%)
+        }
+
+        40% {
+            transform: translateX(0px)
+        }
+
+        60% {
+            transform: translateX(0px)
+        }
+
+        100% {
+            transform: translateX(100%)
+        }
+    }
+
+    .css-plbgu {
+        box-sizing: border-box;
+        margin: 10px 0px 0px;
+        min-width: 0px
+    }
+
+    .css-79elbk {
+        position: relative
+    }
+
+    @keyframes animation-1alkx44 {
+
+        0%,
+        100% {
+            transform: translateY(-100%)
+        }
+
+        50% {
+            transform: translateY(100%)
+        }
+    }
+
+    @keyframes animation-1alkx44 {
+
+        0%,
+        100% {
+            transform: translateY(-100%)
+        }
+
+        50% {
+            transform: translateY(100%)
+        }
+    }
+</style>
+<meta itemprop=name content=莯然 class=sf-hidden>
+<meta itemprop=image content="https://pic1.zhimg.com/v2-cb439d34941947adbf4372f0df246ea7_l.jpg?source=172ae18b"
+    class=sf-hidden>
+<meta itemprop=url content=https://www.zhihu.com/people/mu-ran-13-85 class=sf-hidden>
+<meta itemprop=zhihu:followerCount class=sf-hidden>
+<link crossorigin rel="shortcut icon" type=image/x-icon
+    href="data:image/vnd.microsoft.icon;base64,AAABAAEAICAAAAEAIACoEAAAFgAAACgAAAAgAAAAQAAAAAEAIAAAAAAAABAAABMLAAATCwAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/ZQBg/2cAv/9lAP7/ZgD//2YA//9mAf//ZgD//2YA//9mAP//ZgD//2YA//9mAP//ZgD//2YA//9mAf7/ZgH//2YB//9lAP//ZgD//2YB/v9nAP7/agH//2sA//9sAe7/bwC//3EAXwAAAAAAAAAAAAAAAAAAAAD/YAAQ/2YAz/9lAP7/ZgD//2YA//9lAP7/ZgD//2YA//9mAP//ZgD//2YB/v9lAf7/ZgH//2UA//9mAf7/ZgH//2YA//9mAP//ZgH//2YA//9nAf//aAD//2kA//9rAP//bAD//24A//9wAP//cQD+/3QAv/9wABAAAAAAAAAAAP9lAb//ZQH+/2YA//9mAP//ZgH//2YA//9mAP//ZgD//2YA//9mAP//ZgD//2YA//9mAP//ZwH//2YA//9mAf7/ZgD//2YA//9mAP//ZwD//2gA/v9qAP//bAD//2wB/v9uAP//cAD//3IA//9zAP//dQD//3cAzwAAAAD/ZgBf/2YA//9mAP//ZgH+/2YA//9mAP//ZgH//2YA//9lAP7/ZgH//2YB/v9lAP7/ZgD//2UB/v9lAP7/ZgH+/2UB/v9mAP//ZgH//2cA//9pAP//agD//2wA//9uAP//bwD//3AA//9xAf7/dAD//3UA//92AP//eAH//3kAX/9nAL//ZQD//2YB//9mAP//ZgD//2YA//9mAP//ZgD//2UA/v9lAP7/ZgD//2YA//9mAf//ZgD//2YA//9mAP//ZgH//2cB//9nAP//aQD//2sA//9sAP//bgH//28B/v9wAP7/cgH//3MA//91AP7/dgD//3gA//95AP7/ewC//2YB7v9mAf//ZgD//2UA/v9mAf//jUD//59g//+MQP//ZgD//2UA/v9lAf7/ZgH//2YA//9lAP7/ZgD//2UA/v9mAf7/aAD//2kA//9rAP//bAH+/20A/v9vAP//cQH+/3MA//9zAf7/dQD+/3YA//95AP//egD//3sB/v99Af//ZgD//2YB/v9lAP//ZgD//2UA/v+gYP//9e/////////Yv///eSD+/2YA//9mAP//ZgH//2UA/v9mAf//xaD//2gA//9qAf//awD//2wB/v/JoP//lED//3EA//9zAP//dAD//3YB//93AP//eAD+/3oA//97AP//fQH+/38A//9lAP7/ZgH//2YA//9mAP//ZgD//2YA//+CMP//9e/////////s3///ZgD//2YB/v9lAP7/ZgD//6lw////////cxD//2wA//9tAP//bgD///bv////////wpD//30R//91Af7/eAD//3kA//96AP7/fAH//30B/v+AAf//gAD//2YA//9mAP7/ZgD//2YA//9mAP//ZgD//2YA//+fYP////////////+zgP7/ZQH+/2YA//96If//9e////////9+IP//pGD//////////////////////////////////////////////////3wA/v9+Af//gAD//4AA/v+CAP7/ZQD+/2YA//9mAf//ZgH//2UA//9mAf//ZgH+/2YA///FoP///////+zf//95IP//ZwD//9m/////////2r///20B//+lYP//////////////////l0D//9Wv////////////////////////fgD//4AB//+AAf7/ggD+/4QB//9mAP//ZgD//2YA//9mAP//ZgD//2YA//9mAf//ZgH+/3gh/v///////////6Fg//+scP7///////bv//+AIP7/bwD+/6Zg////////3L///3UA//92Af7/eAD//3oA//+LIP////////////+AAP//gQH+/4IB/v+EAP//hQD//2YA//9mAP//ZQD+/2YB//9nAf//ZgD//2UB/v9mAP//ZgD//8ag////////2r///+zf////////rnD//3AA//9xAP//p2D////////dv///dwD+/3kA//95Af7/fAD//40h/v///////////4IA//+DAP//hQD//4YA//+IAP//ZgH+/2YA//9mAP//ZgD//2YA//9mAf//ZQD+/2YA//9nAP//jkD+///////27///fyD//8CQ//9wAP//cQH+/3MA//+oYP///////96///95AP//egD+/3wB//9+Af//jyD/////////////gwD//4UA//+HAf//iAH//4kA//9mAf7/ZgD//2YA//9mAP//ZgH//2YA//9mAP//ZgD+/2gB/v9qAP//9u////////+JMf7/cAH//3EA//9zAP//dAH+/6lg////////3r///3sB//99Af//fQD+/38A//+RIf7///////////+FAf//hwH//4gB/v+KAP//igH+/2YB//9mAf7/ZgH+/2YA//9mAf//cBD//3oh/v97IP7/fSD//34g///kz////////51Q//9xAf7/cwD//3UA//92AP//q2H+///////ev///fQD//34A//9/AP//gAH+/5Ig/////////////4cA//+JAf//iQD+/4sA/v+NAf7/ZgD//2YB//9mAf7/ZgD//2YB/v+9kP///////////////////////////////////////////////////////+7f//+tYP7//////9+///9+Af//gAH+/4EA//+DAP//lCD/////////////iQH//4oB//+MAf//jgH//48A//9mAP//ZgH//2YB/v9mAP//aAD//3wg///av///7N///+3f///t3///9u/////////37///7t///+7f///v3///zp///61g////////37///4AB//+BAP//gwD//4QA/v+VIP////////////+LAf//jAD//44B//+PAP//kQD+/2YB//9mAP//ZwD//2kA//9pAP//awD//20B//9uAP7/cAD//3EA//+5gP///////8uf//93AP//eQH//3oA/v97AP//rmD////////gv///ggD//4MB/v+FAP//hgH+/5ch/v///////////4wA/v+OAP//jwD//5EA//+TAf7/ZgD//2cA//9pAf//agD//2wA//9tAP//bwD//3AA//9yAP//cwD//7mA////////zJ///3kA//97Af//fAD//34A//+vYP///////+C///+EAP//hQD//4cA//+HAf7/mCD/////////////jwD//5AA/v+RAf//kwH+/5QA//9nAP//aQH//2oB/v9sAf7/bQD//5tQ//+vcP7/ehH+/3QB//91AP//uoD////////Nn///ewD//3wB/v9+AP//gAD//7Bh////////4L///4UA//+HAP7/iAD//4oB/v+aIP////////////+QAP//kgD//5MA//+UAP//lwD+/2kA//9qAP//bAD//20A//9vAP//lED////////u3///hyD//3cB//+8gP///////86f//98AP//fgD//4AA//+BAP//sWD////////gv///iAH//4kA//+KAP//jAH//5sg/////////////5IB//+TAf//lQD//5cB/v+YAP//agD+/20B//9uAf//cAH//3EA//9yAP//3L/////////DkP//eAH+/7yA////////z5///34A//+AAf//gQD//4MB/v+yYP///////+G///+JAf//igD//4wA//+OAP//nSD/////////////lAH//5UA//+XAf7/mAD//5oA//9sAf7/bgH+/3AA//9xAP//cwD//3QA/v+pYP////////fv///ev///79/////////37///37///9+////fv///s2D//7Nh////////9+///+G////jv///47///+O////jv/////////////+VAP//lwD+/5gA//+aAP//mwD//24A//9wAP//cQD//3MA/v91AP//dgD//4gg//////////////////////////////////////////////////+0YP//tGD//////////////////////////////////////////////////5gA/v+ZAf//mgD//5wA//+eAf//cQD//3EB/v9zAP//dQD//3YA//94AP//eQH+/9av////////x5D//6BA/v+hQP//oUD//6NA/v+kQP//pUD//4kB//+REf//qUD//6pA//+rQP//rED//61A//+uQP//r0D//7BA//+yQP//mQD//5sA/v+cAf//ngD+/58A//9yAP//dAH//3UA//92AP//eAH+/3kA/v97Af//rWD////////nz///gQD//4IA//+FAf//hgH//4cA/v+JAP//igD+/4wA//+NAP//jwD//5AA//+SAf7/kwD//5YB/v+WAP//mAD//5oA/v+bAP//nQH//54A/v+fAP//oQD//3QA//91Af//dwD//3gA//96Af//ewD//30A//9/AP//t3D///fv//+TIP7/hAD//4UA//+HAP//iAD+/4sA//+MAf//jQD//48A//+RAf//kgH//5QA//+VAP//lwH+/5gB/v+aAP//mwH//50B//+eAP//oAD+/6EA//+jAO//dwG//3cA//95AP//egH+/3sA//99AP//fwD//4AA//+CAf//hAD//4UA//+GAP7/hwH+/4kA//+LAf7/jAD//44B/v+PAP//kQH+/5MA//+VAf7/lQD//5cA//+YAP//mgD//5wB//+dAP//nwH//6AA//+iAf//owH//6QAv/94AGD/eQH//3oA//98Af//fgH//4AA//+AAP//ggH//4MA//+FAP7/hgH//4gA//+KAP//iwH//40A//+OAP//kAD//5EA//+TAP//lQD//5YB/v+XAP//mQD//5sA/v+cAf7/nQH//58A//+gAP//ogH//6MA//+lAP//pgBfAAAAAP96Ac//fAD//34B/v+AAf//gQD//4IB//+DAf7/hgH//4YA/v+IAf7/igH+/4sB/v+NAP//jgD+/5AA/v+RAP//kwD+/5UA//+XAP7/lwD//5kA//+aAP//nAD//54B/v+fAP//oQD//6IB//+kAf7/pQD//6cAvwAAAAAAAAAA/4AAEP99AL//gAH+/4EA//+DAP//hAH+/4UA//+HAf//iQH//4oA//+LAP//jQH+/44A//+QAP//kgH+/5QA/v+UAP//lgD//5gA//+ZAP//mwD//5wA//+dAP//nwH//6EB//+iAf//owD//6UA//+nAM//nwAQAAAAAAAAAAAAAAAAAAAAAP+BAF//gwC//4QA7/+FAP7/hwD//4kB/v+KAP//jAD//40A//+QAf7/kAD//5IB//+UAf//lQD//5cA//+YAP//mgH+/5sA//+dAf7/ngD//58A//+hAP//owH//6QA//+lAL//pgBfAAAAAAAAAAAAAAAA4AAAB4AAAAGAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAABgAAAAeAAAAc=">
+<style>
+    .sf-hidden {
+        display: none !important
+    }
+</style>
+<link rel=canonical href=https://zhuanlan.zhihu.com/p/404249754>
+<meta http-equiv=content-security-policy
+    content="default-src 'none'; font-src 'self' data:; img-src 'self' data:; style-src 'unsafe-inline'; media-src 'self' data:; script-src 'unsafe-inline' data:; object-src 'self' data:; frame-src 'self' data:;">
+<style>
+    img[src="data:,"],
+    source[src="data:,"] {
+        display: none !important
+    }
+</style>
+
+<body data-new-gr-c-s-loaded=8.907.0 data-gr-ext-installed data-new-gr-c-s-check-loaded=8.907.0 data-rh=class
+    aria-basefontsize=16 class="WhiteBg-body PostIndex-body"><a id=ariaTipText role=pagedescription
+        aria-label="欢迎进入 机器学习中怎样评估分类模型的效果？ - 知乎,盲人用户使用操作智能引导，请按快捷键Ctrl+Alt+R；阅读详细操作说明请按快捷键Ctrl+Alt+问号键。"
+        aria-atomic=true href=javascript:void(0) class=skipAutoFix style=width:1px;height:1px><img src=data:,
+            style=width:1px!important;height:1px!important;position:absolute;top:0px></a>
+    <div id=root>
+        <div class=App>
+            <div class="LoadingBar css-uzm3ri sf-hidden"></div>
+            <div><span style=position:absolute;top:-10000px;left:-10000px role=log aria-live=assertive></span></div>
+            <main role=main class=App-main>
+                <div class=Post-content data-zop-usertoken='{"userToken":"weimingzhang"}'
+                    data-zop='{"authorName":"莯然","itemId":404249754,"title":"机器学习中怎样评估分类模型的效果？","type":"article"}'
+                    data-za-detail-view-path-module=PostItem
+                    data-za-extra-module='{"card":{"content":{"type":"Post","token":"404249754"}}}'>
+                    <div class=ColumnPageHeader-Wrapper>
+                        <div></div>
+                    </div>
+                    <div class=css-78p1r9></div>
+                    <article class="Post-Main Post-NormalMain" tabindex=-1>
+                        <header class=Post-Header>
+                            <h1 class=Post-Title>机器学习中怎样评估分类模型的效果？</h1>
+                            <div class=Post-Author>
+                                <div class=AuthorInfo itemprop=author itemscope itemtype=http://schema.org/Person>
+                                    <div class=AuthorInfo><span></span></div>
+                                </div>
+                            </div>
+                            <div class=LabelContainer-wrapper></div>
+                            <div role=button tabindex=0></div>
+                        </header>
+                        <div class=Post-RichTextContainer>
+                            <div class=css-1yuhvjn>
+                                <div class=css-376mun>
+                                    <div class="RichText ztext Post-RichText css-117anjg" options="[object Object]">
+                                        <p data-first-child data-pid=0Orbfd40>
+                                            在现实生活中，许多事件的发生都是具有随机性的，比如我们无法准确确定股价涨跌、天气变化情况等，而只能通过概率来推测事件发生的可能性。
+                                        <p data-pid=OBSualkP>在机器学习中，逻辑回归是一种计算概率的有效机制，逻辑回归模型可以预测概率作为输出结果，帮助我们对样本所属标签进行判定。
+                                        <p data-pid=YN7vc1JW>
+                                            在二元分类任务中，通常将逻辑回归值映射到二元类别，转换为二进制值之后进行类别划分。可以使用sigmoid函数对输出的y进行线性变换，在y趋向正无穷大时，转换后的输出概率会趋近于1，在y
+                                            趋向负无穷大时，转换后的输出概率会趋近于0，从而可以实现分类预测。
+                                        <p data-pid=bQ1l8tJ_>现在比较关心的问题是，如何将逻辑回归值映射到二元类别呢？
+                                        <p data-pid=da0V8OSP>如果要对事件进行分类，就需要借助相关的判定标准，分类模型也是如此。
+                                        <p data-pid=-E4-gl6V>我们必须定义一个分类阈值，高于该阈值的值表示为目标值所属类，而低于该阈值的值则表示为另一类。
+                                        <p data-pid=Kdgrogsa>至于模型分类的效果如何，就需要借助一些专门的评价指标了。
+                                        <h2>评价指标</h2>
+                                        <p data-pid=R1tx41RQ>
+                                            可用于评估分类模型预测效果的指标有准确率（accuracy）、精确率（precision）、召回率（recall）和F1值。
+                                        <p data-pid=uPs7U_Eo>
+                                            先来看这样一个图表，它被称之为<b>混淆矩阵</b>，每一列代表预测值，每一行代表实际类别，在这个表格中我们可以清楚看到每个类别被正确预测和错误识别的数量。
+                                        <figure data-size=normal><noscript class=sf-hidden><img
+                                                    src="https://pic1.zhimg.com/v2-6dc33da318948f86e95765531476df98_b.jpg"
+                                                    data-caption="" data-size="normal" data-rawwidth="664"
+                                                    data-rawheight="154" class="origin_image zh-lightbox-thumb"
+                                                    width="664"
+                                                    data-original="https://pic1.zhimg.com/v2-6dc33da318948f86e95765531476df98_r.jpg"></noscript>
+                                            <div><img
+                                                    src=data:image/webp;base64,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
+                                                    data-caption data-size=normal data-rawwidth=664 data-rawheight=154
+                                                    class="origin_image zh-lightbox-thumb lazy" width=664
+                                                    data-original=https://pic1.zhimg.com/v2-6dc33da318948f86e95765531476df98_r.jpg
+                                                    data-actualsrc=https://pic1.zhimg.com/v2-6dc33da318948f86e95765531476df98_b.jpg
+                                                    data-original-token=v2-200f4c432999afde52484a2b12abb834 height=154
+                                                    data-lazy-status=ok></div>
+                                        </figure>
+                                        <p data-pid=4Dn7DVjc>因为混淆矩阵可以清晰地呈现各类别之间是否存在混淆，因此衡量的是一个分类器分类的准确程度。
+                                        <p data-pid=wmqO7ZY5>在具体介绍准确率和召回率之前，先来认识一下什么是真阳性、假阳性、真阴性和假阴性。
+                                        <p data-pid=R-GOlfVr>
+                                            <b>真阳性</b>（TP）是指实际为正类且模型预测为正类，<b>假阳性</b>（FP）是指实际为负类而模型将其预测为正类，<b>真阴性</b>（TN）是指实际为负类而模型预测为负类，<b>假阴性</b>（FN）是指实际为正类而模型将其预测为负类。
+                                        <p data-pid=70Kyl1W3><b>准确率（accuracy）等于模型正确预测的数量与全部数量之比</b>：
+                                        <p data-pid=SgERBqF2>accuracy = （TP+TN）/(P+N)
+                                        <p data-pid=d-EwHr2n>在实际分类中，准确率越高就表示模型性能越好吗？未必如此。
+                                        <p class=ztext-empty-paragraph><br>
+                                        <p data-pid=g9wBuli3>下面举个例子，比如有一个可以识别垃圾邮件的过滤器模型，它会将邮件分类为垃圾邮件（阳性类）或非垃圾邮件（阴性类）：
+                                        <table data-draft-node=block data-draft-type=table data-size=normal
+                                            data-row-style=normal>
+                                            <tbody>
+                                                <tr>
+                                                    <td>真阳性（TP）：<br>实际：垃圾邮件预测：垃圾邮件TP数量：2
+                                                    <td>假阳性（FP）：<br>实际：非垃圾邮件预测：垃圾邮件FP数量：2
+                                                <tr>
+                                                    <td>假阴性（FN）：<br>实际：垃圾邮件预测：非垃圾邮件FN数量：6
+                                                    <td>真阴性（TN）：<br>实际：非垃圾邮件预测：非垃圾邮件TN数量：90
+                                        </table>
+                                        <p data-pid=O9WBFpxw>Accuracy = （TP+TN）/(TP+TN+FP+FN) = （2 + 90）/（2+90+2+6）=
+                                            0.92
+                                        <p data-pid=T8lvJTK6> 准确率达到0.92，即100个样本中有92个的类别预测正确。
+                                        <p data-pid=2peTqT4T>
+                                            这个结果看似很好，但再进一步分析，100个样本中，实际上的垃圾邮件有8个，而模型预测正确的只有2个，还有6个没有识别出来。
+                                        <p data-pid=SEInOQdV>试想一下，如果邮件数量巨多，那使用这样模型的过滤器又怎么能胜任垃圾邮件拦截工作呢？
+                                        <p data-pid=E4Lh6OSQ>
+                                            因此，仅仅参考准确率（accuracy）是不够的，还需要同时借助精确率（precision）和召回率（recall）等其他评价指标。
+                                        <p data-pid=XVyDgDAE><b>精确率（precision）等于模型正确预测为阳性的数量与模型预测为阳性的总数之比：</b>
+                                        <p data-pid=hkVxwyfO>Precision = TP /（TP+FP）
+                                        <p data-pid=q2fFxeqM>在上面的例子中，Precision = TP /（TP+FP）= 2 /（2+2）=
+                                            0.5，即模型预测为垃圾邮件时，有50%的概率是正确的。
+                                        <p data-pid=lAgmVVKW><b>召回率（recall）等于模型正确预测为阳性的数量与实际为阳性的总数之比</b>：
+                                        <p data-pid=FqGqsEEI>recall = TP /（TP + FN）
+                                        <p data-pid=UqbF6LL3>所以示例中模型的召回率 recall = TP /（TP + FN）= 2 /（2+6）=
+                                            0.25，即模型正确识别了所有垃圾邮件的25%。
+                                        <p class=ztext-empty-paragraph><br>
+                                        <p data-pid=9o2dbax5>现在有一个问题，精确率（precision）和召回率（recall），两者有什么关系？哪个更重要一些呢？
+                                        <p data-pid=817SEAIf>实际上，精确率和召回率是成反比的，即精确率越高，召回率越低，而且还会受到分类阈值的影响。
+                                        <p class=ztext-empty-paragraph><br>
+                                        <p data-pid=tVJNOUR8>下面我们对示例中的样本数量作调整，重新计算精确率和召回率：
+                                        <table data-draft-node=block data-draft-type=table data-size=normal
+                                            data-row-style=normal>
+                                            <tbody>
+                                                <tr>
+                                                    <td>真阳性（TP）：20
+                                                    <td>假阳性（FP）：3
+                                                <tr>
+                                                    <td>假阴性（FN）：5
+                                                    <td>真阴性（TN）：72
+                                        </table>
+                                        <p data-pid=KqWj6IfH>Precision = TP /（TP+FP）= 20 /（20+3）= 0.86
+                                        <p data-pid=M6qzULPY>Recall = TP /（TP + FN）= 20 /（20+5）= 0.8
+                                        <p data-pid=NqeCD96v>再尝试提高分类阈值，增加假阴性数量，减少假阳性数量：
+                                        <table data-draft-node=block data-draft-type=table data-size=normal
+                                            data-row-style=normal>
+                                            <tbody>
+                                                <tr>
+                                                    <td>真阳性（TP）：18
+                                                    <td>假阳性（FP）：1
+                                                <tr>
+                                                    <td>假阴性（FN）：7
+                                                    <td>真阴性（TN）：74
+                                        </table>
+                                        <p data-pid=oGpDgo5g>Precision = TP /（TP+FP）= 18 /（18+1）= 0.94
+                                        <p data-pid=6ZVmbAD2>Recall = TP /（TP + FN）= 18 /（18+7）= 0.72
+                                        <p data-pid=msqtULuI>可以发现，精确率从0.86提高到0.94的同时，召回率却从0.8降低到了0.72。
+                                        <p class=ztext-empty-paragraph><br>
+                                        <p data-pid=J_QW6dfC>再来降低分类阈值，减少假阴性数量，增加假阳性数量：
+                                        <table data-draft-node=block data-draft-type=table data-size=normal
+                                            data-row-style=normal>
+                                            <tbody>
+                                                <tr>
+                                                    <td>真阳性（TP）：22
+                                                    <td>假阳性（FP）：5
+                                                <tr>
+                                                    <td>假阴性（FN）：3
+                                                    <td>真阴性（TN）：70
+                                        </table>
+                                        <p data-pid=_DXwje7c>Precision = TP /（TP+FP）= 22 /（22+5）= 0.81
+                                        <p data-pid=J4UZXQS3>Recall = TP /（TP + FN）= 22 /（22+3）= 0.88
+                                        <p data-pid=d7oAwgnO>结果精确率从0.94又下降到了0.81，而召回率却从0.72提高到了0.88。
+                                        <h2>ROC曲线和AUC</h2>
+                                        <p data-pid=r1IUsrOJ>最后，提到分类阈值，就不得不说和它密切相关的ROC曲线。
+                                        <p data-pid=iE6WIey0>ROC曲线（receiver operating characteristic
+                                            curve）的全称是接收者工作特征曲线，用来<b>表示分类模型中不同分类阈值的性能</b>。它的横轴为假阳率（FPR），FPR=FP/(FP+TN)，即实际的负类样本中模型错误预测为正类的比例；纵轴为真阳率（TPR），TPR=TP/(TP+FN)，即实际的正类样本中模型正确预测的比例。
+                                        <p class=ztext-empty-paragraph><br>
+                                        <figure data-size=normal><noscript class=sf-hidden><img
+                                                    src="https://pic3.zhimg.com/v2-fb906c3de1c604119690c61aa3c2c616_b.jpg"
+                                                    data-caption="" data-size="normal" data-rawwidth="392"
+                                                    data-rawheight="304" class="content_image" width="392"></noscript>
+                                            <div><img
+                                                    src=data:image/webp;base64,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
+                                                    data-caption data-size=normal data-rawwidth=392 data-rawheight=304
+                                                    class="content_image lazy" width=392
+                                                    data-actualsrc=https://pic3.zhimg.com/v2-fb906c3de1c604119690c61aa3c2c616_b.jpg
+                                                    data-original-token=v2-ea327d68cb774a550779bf9c9e811c39 height=304
+                                                    data-lazy-status=ok></div>
+                                        </figure>
+                                        <p class=ztext-empty-paragraph><br>
+                                        <p data-pid=cf3x3KUE>
+                                            AUC是指ROC曲线下方的面积，面积为0.5时为随机分类，表示模型没有识别能力，面积越接近于1表明模型的识别能力越强，面积等于1为完全识别。
+                                        <p data-pid=Ia5HB7Sj>现实世界中二元分类的 AUC
+                                            值通常是在0.5到1之间，但实际上，如果AUC的值为1，并不意味着模型分类效果达到最好。相反，可能说明模型存在过拟合或者标签数据和特征数据有重合等的错误。
+                                        <p class=ztext-empty-paragraph><br>
+                                        <p>
+                                        <p></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                    <div>
+                        <div style=overflow:unset data-za-detail-view-path-module=CommentList data-za-extra-module={}>
+                            <div class="Comments-container css-plbgu">
+                                <div class=css-79elbk></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+            <div role=complementary>
+                <div class=CornerButtons>
+                    <div class="CornerAnimayedFlex CornerAnimayedFlex--hidden"><button data-tooltip=回到顶部
+                            data-tooltip-position=left data-tooltip-will-hide-on-click=true aria-label=回到顶部 type=button
+                            class="Button CornerButton Button--plain css-89d6kn"><svg width=24 height=24
+                                viewBox="0 0 24 24" aria-hidden=true class="Zi Zi--BackToTop" fill=currentColor>
+                                <path fill-rule=evenodd
+                                    d="M13.204 3.107a1.75 1.75 0 0 0-2.408 0L3.806 9.73c-1.148 1.088-.378 3.02 1.204 3.02h2.24V20c0 .966.784 1.75 1.75 1.75h6A1.75 1.75 0 0 0 16.75 20v-7.25h2.24c1.582 0 2.353-1.932 1.204-3.02l-6.99-6.623Z"
+                                    clip-rule=evenodd></path>
+                            </svg></button></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div>
+        <div style=display:none></div>
+    </div>
+    <div>
+        <div>
+            <div class=css-8pdeid></div>
+        </div>
+    </div>
+    <div>
+        <div>
+            <div style=left:-1179px;top:-999px class=Editable-languageSuggestions>
+                <div>
+                    <div class=Popover><label class="Editable-languageSuggestionsInput Input-wrapper"><input
+                                autocomplete=off role=combobox aria-expanded=false aria-autocomplete=list
+                                aria-activedescendant=AutoComplete7-0 id=Popover6-toggle aria-haspopup=true
+                                aria-owns=Popover6-content class=Input placeholder=选择语言 value><svg width=24 height=24
+                                viewBox="0 0 24 24" fill=#afbdcf class="Zi Zi--Select">
+                                <path fill-rule=evenodd
+                                    d="M12.53 3.47a.75.75 0 0 0-1.06 0l-5 5a.75.75 0 0 0 1.06 1.06L12 5.06l4.47 4.47a.75.75 0 1 0 1.06-1.06l-5-5Zm-5 11a.75.75 0 0 0-1.06 1.06l5 5a.75.75 0 0 0 1.06 0l5-5a.75.75 0 1 0-1.06-1.06L12 18.94l-4.47-4.47Z"
+                                    clip-rule=evenodd></path>
+                            </svg></label></div>
+                </div>
+            </div>
+        </div>
+    </div><grammarly-desktop-integration data-grammarly-shadow-root=true><template shadowroot=open>
+            <style class=sf-hidden>
+                div.grammarly-desktop-integration {
+                    position: absolute;
+                    width: 1px;
+                    height: 1px;
+                    padding: 0;
+                    margin: -1px;
+                    overflow: hidden;
+                    clip: rect(0, 0, 0, 0);
+                    white-space: nowrap;
+                    border: 0;
+                    -moz-user-select: none;
+                    -webkit-user-select: none;
+                    -ms-user-select: none;
+                    user-select: none
+                }
+
+                div.grammarly-desktop-integration:before {
+                    content: attr(data-content)
+                }
+            </style>
+            <div aria-label=grammarly-integration role=group tabindex=-1 class=grammarly-desktop-integration
+                data-content='{"mode":"full","isActive":true,"isUserDisabled":false}'></div>
+        </template></grammarly-desktop-integration>
+    <script
+        data-template-shadow-root>(() => { document.currentScript.remove(); processNode(document); function processNode(node) { node.querySelectorAll("template[shadowroot]").forEach(element => { let shadowRoot = element.parentElement.shadowRoot; if (!shadowRoot) { try { shadowRoot = element.parentElement.attachShadow({ mode: element.getAttribute("shadowroot") }); shadowRoot.innerHTML = element.innerHTML; element.remove() } catch (error) { } if (shadowRoot) { processNode(shadowRoot) } } }) } })()</script>
