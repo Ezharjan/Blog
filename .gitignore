@@ -1,0 +1,5 @@
+.deploy_git
+.vs
+.vscode
+node_modules
+db.json
