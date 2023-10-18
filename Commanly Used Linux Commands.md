@@ -552,7 +552,10 @@ git stash
 git log
 ```
 
-
+19. Copy a directory to another place:
+```bash
+cp -r source_directory destination_directory
+```
 
 
 <br>
