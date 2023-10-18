@@ -355,6 +355,10 @@ conda env create -f environment.yml
 conda env export > environment.yml
 ```
 
+10.  Rename virtual environment:
+```bash
+conda rename -n old_name -d new_name 
+```
 
  
 
