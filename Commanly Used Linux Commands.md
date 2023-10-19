@@ -561,6 +561,13 @@ git log
 cp -r source_directory destination_directory
 ```
 
+20. Download only one folder of a large repository:
+```bash
+git clone -n git://path/to/the_repo.git --depth 1
+cd the_repo
+git checkout HEAD file_or_folder_name
+```
+
 
 <br>
 <br>
