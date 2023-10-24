@@ -270,6 +270,16 @@ sudo ln -s /absolute/path/to/folder/contains/executable/file/ /usr/bin/name_to_e
 ```
 
 
+26. 查看所有的安装过的应用和它的包：
+```bash
+sudo dpkg –list
+```
+
+27.  彻底卸载某个包及其附属组件
+```bash
+sudo apt purge <package_name>
+```
+
 
 <br>
 
