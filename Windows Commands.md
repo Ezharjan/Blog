@@ -29,6 +29,11 @@ Taskkill /F /PID pid_number
    - Press Windows + R, type cmd in Run box, and press `Ctrl + Shift + Enter` to run Command Prompt as administrator.
 
 
+6. Check the Hash code of a file using Powershell ([Reference](https://docs.precisely.com/docs/sftw/spectrum/ProductUpdateSummary/ProductUpdateSummary/source/about_sha256.html)):
+```bash
+Get-fileHash <file_name>
+```
+
 
 <br>
 
