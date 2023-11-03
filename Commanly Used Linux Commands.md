@@ -578,6 +578,11 @@ cd the_repo
 git checkout HEAD file_or_folder_name
 ```
 
+21. Store Git credentials to avoid entering configuration everytime:
+```bash
+git config credential.helper store
+```
+
 
 <br>
 <br>
