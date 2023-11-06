@@ -278,7 +278,7 @@ sudo apt purge <package_name>
 ```
 
 
-1.  Grant permission to all the users for files and folders recursively in this directory:
+28.  Grant permission to all the users for files and folders recursively in this directory:
 ```bash
 # - `0` indicates no permissions (`---`).
 # - `1` indicates execute permission only (`--x`).
@@ -290,6 +290,13 @@ sudo apt purge <package_name>
 # - `7` indicates read, write, and execute permissions (`rwx`).
 sudo chmod -R 777 .
 ```
+
+
+29. Extract a `*.tar.gz` file using `tar` command:
+```bash
+tar -zxvf filename.tar.gz -C /path/to/directory
+```
+
 
 
 
