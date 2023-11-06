@@ -99,9 +99,6 @@ history -cw
  
 
  
-
- 
-
  
 
 5. 查询linux服务器有哪些IP在连接
@@ -279,6 +276,21 @@ sudo dpkg –list
 ```bash
 sudo apt purge <package_name>
 ```
+
+
+1.  Grant permission to all the users for files and folders recursively in this directory:
+```bash
+# - `0` indicates no permissions (`---`).
+# - `1` indicates execute permission only (`--x`).
+# - `2` indicates write permission only (`-w-`).
+# - `3` indicates write and execute permissions (`-wx`).
+# - `4` indicates read permission only (`r--`).
+# - `5` indicates read and execute permissions (`r-x`).
+# - `6` indicates read and write permissions (`rw-`).
+# - `7` indicates read, write, and execute permissions (`rwx`).
+sudo chmod -R 777 .
+```
+
 
 
 <br>
