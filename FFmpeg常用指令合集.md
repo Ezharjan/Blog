@@ -199,6 +199,10 @@ ffmpeg -i input.mp4 -filter_complex "[0:v]setpts=PTS/X[v];[0:a]atempo=2[a]" -map
 ffmpeg -i .\\input.mp4 -map 0:0 -vcodec copy out.mp4
 ```
 
+25. **Trim a video**[More](https://shotstack.io/learn/use-ffmpeg-to-trim-video/):
+```
+ffmpeg -i input.mp4 -ss 00:05:20 -t 00:10:00 -c:v copy -c:a copy output1.mp4
+```
 
 
 
