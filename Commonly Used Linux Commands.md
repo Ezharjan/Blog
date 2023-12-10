@@ -356,6 +356,12 @@ activate ENV_NAME
 conda remove -n ENV_NAME --all -y
 ```
 
+4. If there are permissions failure while removing a conda environment, try:
+```bash
+sudo chown -R $USER:$USER PATH_TO_anaconda3
+# OR: conda update -n base -c defaults conda
+```
+
 
 5. Clone one conda environment to another:
 ```bash
