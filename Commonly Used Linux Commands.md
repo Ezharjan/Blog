@@ -608,6 +608,13 @@ git checkout HEAD file_or_folder_name
 git config credential.helper store
 ```
 
+22. Git clone all the branches at once:
+```bash
+git config --global alias.clone-branches '! git branch -a | sed -n "/\/HEAD /d; /\/master$/d; /remotes/p;" | xargs -L1 git checkout -t'
+git clone-branches
+```
+
+
 
 <br>
 <br>
