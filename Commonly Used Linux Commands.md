@@ -610,8 +610,11 @@ git config credential.helper store
 
 22. Git clone all the branches at once:
 ```bash
-git config --global alias.clone-branches '! git branch -a | sed -n "/\/HEAD /d; /\/master$/d; /remotes/p;" | xargs -L1 git checkout -t'
-git clone-branches
+mkdir repo # THIS IS IMPORTANT!
+cd repo # THIS IS IMPORTANT!
+git clone --bare path/to/repo.git .git # (1) DO NOT MISS THE LAST `.git` (2)  Use `--mirror` instead of `--bare` if remote repo has remotes of its own.
+git config --unset core.bare
+git reset --hard
 ```
 
 
