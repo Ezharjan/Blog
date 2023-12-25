@@ -295,7 +295,13 @@ sudo chmod -R 777 .
 29. Extract a `*.tar.gz` file using `tar` command:
 ```bash
 tar -zxvf filename.tar.gz -C /path/to/directory
+
+
+30. Store the terminal output into a file without losing to see it in terminal itself:
+```bash
+command | tee output.txt
 ```
+
 
 
 
