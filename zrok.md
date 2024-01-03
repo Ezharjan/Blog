@@ -38,6 +38,10 @@
     
     ```bash
     ngrok http 8080
+    # Or
+    ngrok http 8080 --log=stdout
+    # Or
+    ngrok http 8080 --log=stdout > ngrok.log &
     # Output: the URL accessible publically created 
     ```
 
@@ -54,10 +58,14 @@
     
     ```bash
     ngrok tcp 22
+    # Or
+    ngrok tcp 22 --log=stdout
+    # Or
+    ngrok tcp 22 --log=stdout > ngrok.log &
     # Result:                                                                                                                                                                                                                  
     # Introducing Pay-as-you-go pricing: https://ngrok.com/r/payg                                                                                                                                                        
     # Session Status                online                                                                                                                                                                               
-    # Account                       UMEDU (Plan: Free)                                                                                                                                                                   
+    # Account                       ACCOUNT_NAME (Plan: Free)                                                                                                                                                                   
     # Version                       3.5.0                                                                                                                                                                                
     # Region                        Asia Pacific (ap)                                                                                                                                                                    
     # Latency                       41ms                                                                                                                                                                                 

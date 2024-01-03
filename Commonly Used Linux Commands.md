@@ -302,6 +302,10 @@ tar -zxvf filename.tar.gz -C /path/to/directory
 command | tee output.txt
 ```
 
+31. See which application is running on port 80:
+```bash
+netstat -an | grep ":80"
+```
 
 
 
