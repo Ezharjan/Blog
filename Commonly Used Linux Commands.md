@@ -307,6 +307,14 @@ command | tee output.txt
 netstat -an | grep ":80"
 ```
 
+32. See the size of the files in this folder:
+```bash
+du -sh directory_name    #Gives you the summarized(-s) size of the directory in human readable(-h) format
+du -bsh *                #Gives you the apparent(-b) summarized(-s) size of all the files and directories in the current directory in human readable(-h) format
+```
+
+
+ 
 
 
 
