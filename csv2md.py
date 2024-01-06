@@ -1,5 +1,3 @@
-gFileName = "PoPCites"
-
 import csv
 
 
@@ -54,9 +52,7 @@ def generate_markdown(data):
 
 # Main program
 def main():
-    global gFileName
-    # file_name = "file.csv"  # File name
-    file_name = gFileName + ".csv"  # File name
+    file_name = input("Please enter the file name: ")
     sort_by = input("Enter 'Cites' or 'Year' to sort by: ").strip()
     if sort_by not in ["Cites", "Year"]:
         sort_by = "Cites"
