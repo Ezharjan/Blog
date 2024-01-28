@@ -635,6 +635,11 @@ git config --unset core.bare
 git reset --hard
 ```
 
+1.  Clone only one branch:
+```bash
+git clone -b mybranch --single-branch git://sub.domain.com/repo.git
+```
+
 
 
 <br>
