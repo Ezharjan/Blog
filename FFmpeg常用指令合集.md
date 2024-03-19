@@ -205,7 +205,7 @@ ffmpeg -i input.mp4 -ss 00:05:20 -t 00:10:00 -c:v copy -c:a copy output1.mp4
 ```
 
 
-26. Merge audio with video the file - 合并视频和音乐：
+26. Merge audio with video the file - 合并视频和声音，合并视频和音乐：
 ```
 ffmpeg -i "videoFile.mp4" -i "audioFile.mp3" -shortest outPutFile.mp4
 ```
