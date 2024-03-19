@@ -181,35 +181,33 @@ ffmpeg -i out.mp4 out%4d.png
 ffmpeg -ss 00:00:00 -i src.mp4 -c copy -t 00:20:59 out.mp4
 ```
 
-22. **加速整个视频（含音频）到2倍速**
+22. **加速整个视频（含音频）到2倍速, 这里的“0.5”控制了倍速的倍数。**
 ```
 ffmpeg -i input.mkv -filter_complex "[0:v]setpts=0.5*PTS[v];[0:a]atempo=2[a]" -map "[v]" -map "[a]" output.mkv
 ```
 
-**这里的“0.5”控制了倍速的倍数。也可以用下方指令， X表示倍速率：**
-
-```
-ffmpeg -i input.mp4 -filter_complex "[0:v]setpts=PTS/X[v];[0:a]atempo=2[a]" -map "[v]" -map "[a]" output.mp4
-```
 
 
-
-23. **使用ffmpeg去除视频中的音频**
+23.  **使用ffmpeg去除视频中的音频**
 ```
 ffmpeg -i .\\input.mp4 -map 0:0 -vcodec copy out.mp4
 ```
 
-25. **Trim a video**[More](https://shotstack.io/learn/use-ffmpeg-to-trim-video/):
+24. **Trim a video**[More](https://shotstack.io/learn/use-ffmpeg-to-trim-video/):
 ```
 ffmpeg -i input.mp4 -ss 00:05:20 -t 00:10:00 -c:v copy -c:a copy output1.mp4
 ```
 
 
-26. Merge audio with video the file - 合并视频和声音，合并视频和音乐：
+25.  Merge audio with video the file - 合并视频和声音，合并视频和音频 [[Ref](https://juejin.cn/s/ffmpeg%20%E5%90%88%E5%B9%B6%E9%9F%B3%E9%A2%91%E5%92%8C%E8%A7%86%E9%A2%91)] ：
 ```
-ffmpeg -i "videoFile.mp4" -i "audioFile.mp3" -shortest outPutFile.mp4
+ffmpeg -i video.mp4 -i audio.mp3 -c copy -map 0:v:0 -map 1:a:0 output.mp4
 ```
 
+26.  调整音频速率（输入必须得是MP4）:
+```
+ffmpeg -i input.mp4 -filter:a "atempo=2.0" -vn output.mp3
+```
 
 
 <br><br><br><br>
