@@ -181,9 +181,9 @@ ffmpeg -i out.mp4 out%4d.png
 ffmpeg -ss 00:00:00 -i src.mp4 -c copy -t 00:20:59 out.mp4
 ```
 
-22. **加速整个视频（含音频）到2倍速, 这里的“0.5”控制了倍速的倍数。**
+1.  **加速整个视频（含音频）到2倍速**
 ```
-ffmpeg -i input.mkv -filter_complex "[0:v]setpts=0.5*PTS[v];[0:a]atempo=2[a]" -map "[v]" -map "[a]" output.mkv
+ffmpeg -i input.mkv -filter_complex "[0:v]setpts=0.5*PTS[v];[0:a]atempo=2.0[a]" -map "[v]" -map "[a]" output.mkv
 ```
 
 
