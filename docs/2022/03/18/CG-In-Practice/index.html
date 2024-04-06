@@ -27,28 +27,28 @@
 <meta property="og:site_name">
 <meta property="og:description" content="Alexander Ezharjan        IntroductionThis reference book is mainly to discuss the detailed knowledge of basic computer graphics based on the soft renderer project called Render Engine, which is a ti">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://ezharjan.github.io/Blog/Blog/2022/03/18/CG-In-Practice/Homogeneous%20Transformation%20Matrix%20For%203D%20Bodies.png">
 <meta property="og:image" content="https://ezharjan.github.io/Blog/2022/03/18/CG-In-Practice/Homogeneous%20Transformation%20Matrix%20For%203D%20Bodies.png">
-<meta property="og:image" content="https://ezharjan.github.io/Blog/2022/03/18/CG-In-Practice/Homogeneous%20Transformation%20Matrix%20For%203D%20Bodies.png">
+<meta property="og:image" content="https://ezharjan.github.io/Blog/Blog/2022/03/18/CG-In-Practice/AcrossB.png">
 <meta property="og:image" content="https://ezharjan.github.io/Blog/2022/03/18/CG-In-Practice/AcrossB.png">
-<meta property="og:image" content="https://ezharjan.github.io/Blog/2022/03/18/CG-In-Practice/AcrossB.png">
+<meta property="og:image" content="https://ezharjan.github.io/Blog/Blog/2022/03/18/CG-In-Practice/rightHandRule.png">
 <meta property="og:image" content="https://ezharjan.github.io/Blog/2022/03/18/CG-In-Practice/rightHandRule.png">
-<meta property="og:image" content="https://ezharjan.github.io/Blog/2022/03/18/CG-In-Practice/rightHandRule.png">
+<meta property="og:image" content="https://ezharjan.github.io/Blog/Blog/2022/03/18/CG-In-Practice/lengthACrossB.png">
 <meta property="og:image" content="https://ezharjan.github.io/Blog/2022/03/18/CG-In-Practice/lengthACrossB.png">
-<meta property="og:image" content="https://ezharjan.github.io/Blog/2022/03/18/CG-In-Practice/lengthACrossB.png">
+<meta property="og:image" content="https://ezharjan.github.io/Blog/Blog/2022/03/18/CG-In-Practice/crossProduct.gif">
 <meta property="og:image" content="https://ezharjan.github.io/Blog/2022/03/18/CG-In-Practice/crossProduct.gif">
-<meta property="og:image" content="https://ezharjan.github.io/Blog/2022/03/18/CG-In-Practice/crossProduct.gif">
+<meta property="og:image" content="https://ezharjan.github.io/Blog/Blog/2022/03/18/CG-In-Practice/crossProduct.png">
 <meta property="og:image" content="https://ezharjan.github.io/Blog/2022/03/18/CG-In-Practice/crossProduct.png">
-<meta property="og:image" content="https://ezharjan.github.io/Blog/2022/03/18/CG-In-Practice/crossProduct.png">
+<meta property="og:image" content="https://ezharjan.github.io/Blog/Blog/2022/03/18/CG-In-Practice/calculateCrossProduct.png">
 <meta property="og:image" content="https://ezharjan.github.io/Blog/2022/03/18/CG-In-Practice/calculateCrossProduct.png">
-<meta property="og:image" content="https://ezharjan.github.io/Blog/2022/03/18/CG-In-Practice/calculateCrossProduct.png">
-<meta property="og:image" content="https://ezharjan.github.io/Blog/2022/03/18/CG-In-Practice/GimbalLockOccasions.png">
+<meta property="og:image" content="https://ezharjan.github.io/Blog/Blog/2022/03/18/CG-In-Practice/GimbalLockOccasions.png">
 <meta property="og:image" content="https://ezharjan.github.io/Blog/2022/03/18/CG-In-Practice/GimbalLockOccasions.png">
 <meta property="article:published_time" content="2022-03-18T15:49:16.000Z">
-<meta property="article:modified_time" content="2022-10-17T02:11:56.494Z">
+<meta property="article:modified_time" content="2024-04-06T13:13:07.789Z">
 <meta property="article:author" content="Alexander Ezharjan">
 <meta property="article:tag" content="Software, Lab, Engineer, Game Engine, Alexander, Ezharjan">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://ezharjan.github.io/Blog/2022/03/18/CG-In-Practice/Homogeneous%20Transformation%20Matrix%20For%203D%20Bodies.png">
+<meta name="twitter:image" content="https://ezharjan.github.io/Blog/Blog/2022/03/18/CG-In-Practice/Homogeneous%20Transformation%20Matrix%20For%203D%20Bodies.png">
 
 <link rel="canonical" href="https://ezharjan.github.io/Blog/2022/03/18/CG-In-Practice/">
 
@@ -233,7 +233,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-10-17 10:11:56" itemprop="dateModified" datetime="2022-10-17T10:11:56+08:00">2022-10-17</time>
+                <time title="Modified: 2024-04-06 21:13:07" itemprop="dateModified" datetime="2024-04-06T21:13:07+08:00">2024-04-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -333,7 +333,7 @@
 <p>Let’s take a closer look at the inside of this simple vertex.</p>
 <p>You may realize that the position attribute in our vertex is a four-dimensional vector rather than a 3D one. So what does the fourth dimension represents for? Why we use a four-dimensional vector to store a position in a three-dimensional scene? Actually the W, which is the forth dimension, represents for the homogeneous coordinate. Now tha question lingers that why we use homogeneous coordinate while 3D coordinate is enough?<br>The answer of the questions above lays on the three factors below:</p>
 <p>(1) It plays an important role when conducting homogeneous transformation. The Homogeneous Transformation Matrix For 3D Bodies is shown below. You will notice that it will be easier for multiple matrices’ multiplication if you use have N+1 dimensions than directly calculating N dimensional matrices. Especially the rotation will be more convenient for the quaternion itself demands 4 dimensional vector.</p>
-<p><img src="https://ezharjan.github.io/Blog/2022/03/18/CG-In-Practice/Homogeneous%20Transformation%20Matrix%20For%203D%20Bodies.png" alt="CG"></p>
+<p><img src="/Blog/Blog/2022/03/18/CG-In-Practice/Homogeneous%20Transformation%20Matrix%20For%203D%20Bodies.png" alt="CG"></p>
 <!-- <p align='center'>
 <img src="./Homogeneous%20Transformation%20Matrix%20For%203D%20Bodies.png">
 </p> -->
@@ -373,13 +373,13 @@
 
 <p>The cross product of the 2 vectors is totally different for just multiplying the vectors and it has distinct meaning from the inner product. The detail of the cross product of 2 vectors is shown below.  </p>
 <p>The Cross Product a × b of two vectors is another vector that is at right angles to both:</p>
-<p><img src="https://ezharjan.github.io/Blog/2022/03/18/CG-In-Practice/AcrossB.png" alt="CG"></p>
+<p><img src="/Blog/Blog/2022/03/18/CG-In-Practice/AcrossB.png" alt="CG"></p>
 <!-- <p align='center'>
 <img src="./AcrossB.png">
 </p> -->
 
 <p>The cross product could point in the completely opposite direction and still be at right angles to the two other vectors, so we have the: <code>Right Hand Rule</code>.</p>
-<p><img src="https://ezharjan.github.io/Blog/2022/03/18/CG-In-Practice/rightHandRule.png" alt="CG"></p>
+<p><img src="/Blog/Blog/2022/03/18/CG-In-Practice/rightHandRule.png" alt="CG"></p>
 <!-- <p align='center'>
 <img src="./rightHandRule.png">
 </p> -->
@@ -387,13 +387,13 @@
 
 
 <p>The magnitude (length) of the cross product equals the area of a parallelogram with vectors a and b for sides:</p>
-<p><img src="https://ezharjan.github.io/Blog/2022/03/18/CG-In-Practice/lengthACrossB.png" alt="CG"></p>
+<p><img src="/Blog/Blog/2022/03/18/CG-In-Practice/lengthACrossB.png" alt="CG"></p>
 <!-- <p align='center'>
 <img src="./lengthACrossB.png">
 </p> -->
 
 <p>See how it changes for different angles:</p>
-<p><img src="https://ezharjan.github.io/Blog/2022/03/18/CG-In-Practice/crossProduct.gif" alt="CG"></p>
+<p><img src="/Blog/Blog/2022/03/18/CG-In-Practice/crossProduct.gif" alt="CG"></p>
 <!-- <p align='center'>
 <img src="./crossProduct.gif">
 </p> -->
@@ -406,7 +406,7 @@
 <p>And it can point one way or the other!</p>
 <p>So how do we calculate it?</p>
 <p>We can calculate the Cross Product this way:</p>
-<p><img src="https://ezharjan.github.io/Blog/2022/03/18/CG-In-Practice/crossProduct.png" alt="CG"></p>
+<p><img src="/Blog/Blog/2022/03/18/CG-In-Practice/crossProduct.png" alt="CG"></p>
 <!-- <p align='center'>
 <img src="./crossProduct.png">
 </p> -->
@@ -427,7 +427,7 @@
 <li>cy &#x3D; azbx − axbz</li>
 <li>cz &#x3D; axby − aybx</li>
 </ul>
-<p><img src="https://ezharjan.github.io/Blog/2022/03/18/CG-In-Practice/calculateCrossProduct.png" alt="CG"></p>
+<p><img src="/Blog/Blog/2022/03/18/CG-In-Practice/calculateCrossProduct.png" alt="CG"></p>
 <!-- <p align='center'>
 <img src="./calculateCrossProduct.png">
 </p> -->
@@ -513,7 +513,7 @@
 <p>The way to build out these matrices in C++ goes like the codes below:</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line">   <span class="function">Matrix4f <span class="title">Matrix4f::getRotateXMatrix</span><span class="params">(<span class="type">const</span> <span class="type">float</span>&amp; thetaX)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	Matrix4f rotateXMatrix;</span><br><span class="line"></span><br><span class="line">	<span class="type">float</span> angle = <span class="built_in">RadToDegree</span>(thetaX);</span><br><span class="line"></span><br><span class="line">	rotateXMatrix.matrix[<span class="number">0</span>][<span class="number">0</span>] = <span class="number">1.0f</span>;</span><br><span class="line">	rotateXMatrix.matrix[<span class="number">3</span>][<span class="number">3</span>] = <span class="number">1.0f</span>;</span><br><span class="line"></span><br><span class="line">	<span class="type">float</span> cosine = (<span class="type">float</span>)<span class="built_in">cos</span>(angle);</span><br><span class="line">	<span class="type">float</span> sine = (<span class="type">float</span>)<span class="built_in">sin</span>(angle);</span><br><span class="line">	rotateXMatrix.matrix[<span class="number">1</span>][<span class="number">1</span>] = cosine;</span><br><span class="line">	rotateXMatrix.matrix[<span class="number">2</span>][<span class="number">2</span>] = cosine;</span><br><span class="line">	rotateXMatrix.matrix[<span class="number">1</span>][<span class="number">2</span>] = sine;</span><br><span class="line">	rotateXMatrix.matrix[<span class="number">2</span>][<span class="number">1</span>] = -sine;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> rotateXMatrix;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">Matrix4f <span class="title">Matrix4f::getRotateYMatrix</span><span class="params">(<span class="type">const</span> <span class="type">float</span>&amp; thetaY)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	Matrix4f rotateYMatrix;</span><br><span class="line"></span><br><span class="line">	<span class="type">float</span> angle = <span class="built_in">RadToDegree</span>(thetaY);</span><br><span class="line"></span><br><span class="line">	rotateYMatrix.matrix[<span class="number">1</span>][<span class="number">1</span>] = <span class="number">1.0f</span>;</span><br><span class="line">	rotateYMatrix.matrix[<span class="number">3</span>][<span class="number">3</span>] = <span class="number">1.0f</span>;</span><br><span class="line"></span><br><span class="line">	<span class="type">float</span> cosine = (<span class="type">float</span>)<span class="built_in">cos</span>(angle);</span><br><span class="line">	<span class="type">float</span> sine = (<span class="type">float</span>)<span class="built_in">sin</span>(angle);</span><br><span class="line">	rotateYMatrix.matrix[<span class="number">0</span>][<span class="number">0</span>] = cosine;</span><br><span class="line">	rotateYMatrix.matrix[<span class="number">2</span>][<span class="number">2</span>] = cosine;</span><br><span class="line">	rotateYMatrix.matrix[<span class="number">0</span>][<span class="number">2</span>] = -sine;</span><br><span class="line">	rotateYMatrix.matrix[<span class="number">2</span>][<span class="number">0</span>] = sine;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> rotateYMatrix;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">Matrix4f <span class="title">Matrix4f::getRotateZMatrix</span><span class="params">(<span class="type">const</span> <span class="type">float</span>&amp; thetaZ)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	Matrix4f rotateZMatrix;</span><br><span class="line"></span><br><span class="line">	rotateZMatrix.matrix[<span class="number">2</span>][<span class="number">2</span>] = <span class="number">1.0f</span>;</span><br><span class="line">	rotateZMatrix.matrix[<span class="number">3</span>][<span class="number">3</span>] = <span class="number">1.0f</span>;</span><br><span class="line"></span><br><span class="line">	<span class="type">float</span> angle = <span class="built_in">RadToDegree</span>(thetaZ);</span><br><span class="line"></span><br><span class="line">	<span class="type">float</span> cosine = (<span class="type">float</span>)<span class="built_in">cos</span>(angle);</span><br><span class="line">	<span class="type">float</span> sine = (<span class="type">float</span>)<span class="built_in">sin</span>(angle);</span><br><span class="line">	rotateZMatrix.matrix[<span class="number">0</span>][<span class="number">0</span>] = cosine;</span><br><span class="line">	rotateZMatrix.matrix[<span class="number">1</span>][<span class="number">1</span>] = cosine;</span><br><span class="line">	rotateZMatrix.matrix[<span class="number">0</span>][<span class="number">1</span>] = sine;</span><br><span class="line">	rotateZMatrix.matrix[<span class="number">1</span>][<span class="number">0</span>] = -sine;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> rotateZMatrix;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 <p>But notice that the direct rotation via Euler angles on any objects&#x2F;models will cause <code>Gimbal Lock</code>. <strong>Gimbal lock is the loss of one degree of freedom in a three-dimensional, three-gimbal mechanism that occurs when the axes of two of the three gimbals are driven into a parallel configuration, “locking” the system into rotation in a degenerate two-dimensional space.</strong><br>The word lock is misleading: no gimbal is restrained. All three gimbals can still rotate freely about their respective axes of suspension. Nevertheless, because of the parallel orientation of two of the gimbals’ axes there is no gimbal available to accommodate rotation about one axis.</p>
-<p><img src="https://ezharjan.github.io/Blog/2022/03/18/CG-In-Practice/GimbalLockOccasions.png" alt="CG"></p>
+<p><img src="/Blog/Blog/2022/03/18/CG-In-Practice/GimbalLockOccasions.png" alt="CG"></p>
 <p align="center">
 All together there are 6 parenting combinations to choose from. In each case gimbal lock occurs on the parent when the middle axis is rotated too far.
 <!-- <img src="./GimbalLockOccasions.png"> -->
@@ -1682,7 +1682,7 @@ The final process of the rasterization stage is kind of like image processing, i
       <div class="site-state-item site-state-posts">
           <a href="/Blog/archives/">
         
-          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-count">18</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -1715,7 +1715,7 @@ The final process of the rasterization stage is kind of like image processing, i
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2023</span>
+  <span itemprop="copyrightYear">2024</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
