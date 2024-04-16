@@ -80,7 +80,7 @@
 <p>Let’s take a closer look at the inside of this simple vertex.</p>
 <p>You may realize that the position attribute in our vertex is a four-dimensional vector rather than a 3D one. So what does the fourth dimension represents for? Why we use a four-dimensional vector to store a position in a three-dimensional scene? Actually the W, which is the forth dimension, represents for the homogeneous coordinate. Now tha question lingers that why we use homogeneous coordinate while 3D coordinate is enough?<br>The answer of the questions above lays on the three factors below:</p>
 <p>(1) It plays an important role when conducting homogeneous transformation. The Homogeneous Transformation Matrix For 3D Bodies is shown below. You will notice that it will be easier for multiple matrices’ multiplication if you use have N+1 dimensions than directly calculating N dimensional matrices. Especially the rotation will be more convenient for the quaternion itself demands 4 dimensional vector.</p>
-<p><img src="https://ezharjan.github.io/Blog/2022/03/18/CG-In-Practice/Homogeneous%20Transformation%20Matrix%20For%203D%20Bodies.png" alt="CG"></p>
+<p><img src="/Blog/Blog/2022/03/18/CG-In-Practice/Homogeneous%20Transformation%20Matrix%20For%203D%20Bodies.png" alt="CG"></p>
 <!-- <p align='center'>
 <img src="./Homogeneous%20Transformation%20Matrix%20For%203D%20Bodies.png">
 </p> -->
@@ -120,13 +120,13 @@
 
 <p>The cross product of the 2 vectors is totally different for just multiplying the vectors and it has distinct meaning from the inner product. The detail of the cross product of 2 vectors is shown below.  </p>
 <p>The Cross Product a × b of two vectors is another vector that is at right angles to both:</p>
-<p><img src="https://ezharjan.github.io/Blog/2022/03/18/CG-In-Practice/AcrossB.png" alt="CG"></p>
+<p><img src="/Blog/Blog/2022/03/18/CG-In-Practice/AcrossB.png" alt="CG"></p>
 <!-- <p align='center'>
 <img src="./AcrossB.png">
 </p> -->
 
 <p>The cross product could point in the completely opposite direction and still be at right angles to the two other vectors, so we have the: <code>Right Hand Rule</code>.</p>
-<p><img src="https://ezharjan.github.io/Blog/2022/03/18/CG-In-Practice/rightHandRule.png" alt="CG"></p>
+<p><img src="/Blog/Blog/2022/03/18/CG-In-Practice/rightHandRule.png" alt="CG"></p>
 <!-- <p align='center'>
 <img src="./rightHandRule.png">
 </p> -->
@@ -134,13 +134,13 @@
 
 
 <p>The magnitude (length) of the cross product equals the area of a parallelogram with vectors a and b for sides:</p>
-<p><img src="https://ezharjan.github.io/Blog/2022/03/18/CG-In-Practice/lengthACrossB.png" alt="CG"></p>
+<p><img src="/Blog/Blog/2022/03/18/CG-In-Practice/lengthACrossB.png" alt="CG"></p>
 <!-- <p align='center'>
 <img src="./lengthACrossB.png">
 </p> -->
 
 <p>See how it changes for different angles:</p>
-<p><img src="https://ezharjan.github.io/Blog/2022/03/18/CG-In-Practice/crossProduct.gif" alt="CG"></p>
+<p><img src="/Blog/Blog/2022/03/18/CG-In-Practice/crossProduct.gif" alt="CG"></p>
 <!-- <p align='center'>
 <img src="./crossProduct.gif">
 </p> -->
@@ -153,7 +153,7 @@
 <p>And it can point one way or the other!</p>
 <p>So how do we calculate it?</p>
 <p>We can calculate the Cross Product this way:</p>
-<p><img src="https://ezharjan.github.io/Blog/2022/03/18/CG-In-Practice/crossProduct.png" alt="CG"></p>
+<p><img src="/Blog/Blog/2022/03/18/CG-In-Practice/crossProduct.png" alt="CG"></p>
 <!-- <p align='center'>
 <img src="./crossProduct.png">
 </p> -->
@@ -174,7 +174,7 @@
 <li>cy &#x3D; azbx − axbz</li>
 <li>cz &#x3D; axby − aybx</li>
 </ul>
-<p><img src="https://ezharjan.github.io/Blog/2022/03/18/CG-In-Practice/calculateCrossProduct.png" alt="CG"></p>
+<p><img src="/Blog/Blog/2022/03/18/CG-In-Practice/calculateCrossProduct.png" alt="CG"></p>
 <!-- <p align='center'>
 <img src="./calculateCrossProduct.png">
 </p> -->
@@ -260,7 +260,7 @@
 <p>The way to build out these matrices in C++ goes like the codes below:</p>
 <figure class="highlight c++"><table><tr><td class="code"><pre><span class="line">   <span class="function">Matrix4f <span class="title">Matrix4f::getRotateXMatrix</span><span class="params">(<span class="type">const</span> <span class="type">float</span>&amp; thetaX)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	Matrix4f rotateXMatrix;</span><br><span class="line"></span><br><span class="line">	<span class="type">float</span> angle = <span class="built_in">RadToDegree</span>(thetaX);</span><br><span class="line"></span><br><span class="line">	rotateXMatrix.matrix[<span class="number">0</span>][<span class="number">0</span>] = <span class="number">1.0f</span>;</span><br><span class="line">	rotateXMatrix.matrix[<span class="number">3</span>][<span class="number">3</span>] = <span class="number">1.0f</span>;</span><br><span class="line"></span><br><span class="line">	<span class="type">float</span> cosine = (<span class="type">float</span>)<span class="built_in">cos</span>(angle);</span><br><span class="line">	<span class="type">float</span> sine = (<span class="type">float</span>)<span class="built_in">sin</span>(angle);</span><br><span class="line">	rotateXMatrix.matrix[<span class="number">1</span>][<span class="number">1</span>] = cosine;</span><br><span class="line">	rotateXMatrix.matrix[<span class="number">2</span>][<span class="number">2</span>] = cosine;</span><br><span class="line">	rotateXMatrix.matrix[<span class="number">1</span>][<span class="number">2</span>] = sine;</span><br><span class="line">	rotateXMatrix.matrix[<span class="number">2</span>][<span class="number">1</span>] = -sine;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> rotateXMatrix;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">Matrix4f <span class="title">Matrix4f::getRotateYMatrix</span><span class="params">(<span class="type">const</span> <span class="type">float</span>&amp; thetaY)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	Matrix4f rotateYMatrix;</span><br><span class="line"></span><br><span class="line">	<span class="type">float</span> angle = <span class="built_in">RadToDegree</span>(thetaY);</span><br><span class="line"></span><br><span class="line">	rotateYMatrix.matrix[<span class="number">1</span>][<span class="number">1</span>] = <span class="number">1.0f</span>;</span><br><span class="line">	rotateYMatrix.matrix[<span class="number">3</span>][<span class="number">3</span>] = <span class="number">1.0f</span>;</span><br><span class="line"></span><br><span class="line">	<span class="type">float</span> cosine = (<span class="type">float</span>)<span class="built_in">cos</span>(angle);</span><br><span class="line">	<span class="type">float</span> sine = (<span class="type">float</span>)<span class="built_in">sin</span>(angle);</span><br><span class="line">	rotateYMatrix.matrix[<span class="number">0</span>][<span class="number">0</span>] = cosine;</span><br><span class="line">	rotateYMatrix.matrix[<span class="number">2</span>][<span class="number">2</span>] = cosine;</span><br><span class="line">	rotateYMatrix.matrix[<span class="number">0</span>][<span class="number">2</span>] = -sine;</span><br><span class="line">	rotateYMatrix.matrix[<span class="number">2</span>][<span class="number">0</span>] = sine;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> rotateYMatrix;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">Matrix4f <span class="title">Matrix4f::getRotateZMatrix</span><span class="params">(<span class="type">const</span> <span class="type">float</span>&amp; thetaZ)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	Matrix4f rotateZMatrix;</span><br><span class="line"></span><br><span class="line">	rotateZMatrix.matrix[<span class="number">2</span>][<span class="number">2</span>] = <span class="number">1.0f</span>;</span><br><span class="line">	rotateZMatrix.matrix[<span class="number">3</span>][<span class="number">3</span>] = <span class="number">1.0f</span>;</span><br><span class="line"></span><br><span class="line">	<span class="type">float</span> angle = <span class="built_in">RadToDegree</span>(thetaZ);</span><br><span class="line"></span><br><span class="line">	<span class="type">float</span> cosine = (<span class="type">float</span>)<span class="built_in">cos</span>(angle);</span><br><span class="line">	<span class="type">float</span> sine = (<span class="type">float</span>)<span class="built_in">sin</span>(angle);</span><br><span class="line">	rotateZMatrix.matrix[<span class="number">0</span>][<span class="number">0</span>] = cosine;</span><br><span class="line">	rotateZMatrix.matrix[<span class="number">1</span>][<span class="number">1</span>] = cosine;</span><br><span class="line">	rotateZMatrix.matrix[<span class="number">0</span>][<span class="number">1</span>] = sine;</span><br><span class="line">	rotateZMatrix.matrix[<span class="number">1</span>][<span class="number">0</span>] = -sine;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> rotateZMatrix;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 <p>But notice that the direct rotation via Euler angles on any objects&#x2F;models will cause <code>Gimbal Lock</code>. <strong>Gimbal lock is the loss of one degree of freedom in a three-dimensional, three-gimbal mechanism that occurs when the axes of two of the three gimbals are driven into a parallel configuration, “locking” the system into rotation in a degenerate two-dimensional space.</strong><br>The word lock is misleading: no gimbal is restrained. All three gimbals can still rotate freely about their respective axes of suspension. Nevertheless, because of the parallel orientation of two of the gimbals’ axes there is no gimbal available to accommodate rotation about one axis.</p>
-<p><img src="https://ezharjan.github.io/Blog/2022/03/18/CG-In-Practice/GimbalLockOccasions.png" alt="CG"></p>
+<p><img src="/Blog/Blog/2022/03/18/CG-In-Practice/GimbalLockOccasions.png" alt="CG"></p>
 <p align="center">
 All together there are 6 parenting combinations to choose from. In each case gimbal lock occurs on the parent when the middle axis is rotated too far.
 <!-- <img src="./GimbalLockOccasions.png"> -->
@@ -463,6 +463,52 @@ All together there are 6 parenting combinations to choose from. In each case gim
       </categories>
   </entry>
   <entry>
+    <title>On Academic Attitude</title>
+    <url>/Blog/2024/04/06/On-Academic-Attitude/</url>
+    <content><![CDATA[<h6 align="center">Editor: Alexander Ezharjan<h6>
+
+<p>As time passes by from when I started to dig into academia, I’ve met lots of nice researchers who have serious disciplines on themselves, while also meeting some researchers who are conducting research only for publishing it and obtain the degree they wanted, let alone their “reproducible accomplishments”.</p>
+<p>How should we view those researchers who “do not want others to reproduce their results published”?<br>How should we view those researchers who “accidentally omit some important details for reproduction”?<br>How should we view those researchers who “mistakenly wrote the wrong version of their reproduction environment”?</p>
+</h6></h6>]]></content>
+  </entry>
+  <entry>
+    <title>Hexo Hello World</title>
+    <url>/Blog/2024/04/06/hello-world/</url>
+    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>]]></content>
+      <categories>
+        <category>Hexo Intro</category>
+      </categories>
+  </entry>
+  <entry>
     <title>Ways to Reduce Similarity of Papers Submitted via Turnitin</title>
     <url>/Blog/2023/03/13/Ways-to-Reduce-Similarity-of-Papers-Submitted-via-Turnitin/</url>
     <content><![CDATA[<h6 align="center">Editor: Alexander Ezharjan<h6>
@@ -516,7 +562,13 @@ All together there are 6 parenting combinations to choose from. In each case gim
 <li>[PREFIX]&#x2F;B59-yAfN-5c</li>
 <li>[PREFIX]&#x2F;UfdyJO3H5mo</li>
 <li>[PREFIX]&#x2F;uGPFPjTT2hE</li>
+<li>[PREFIX]&#x2F;6UkKKxXtNh0</li>
 <li>[PREFIX]&#x2F;eh2bNNBGggU</li>
+<li>[PREFIX]&#x2F;x37alkIDvVQ</li>
+<li>[PREFIX]&#x2F;R8f6mFvO6Wg</li>
+<li>[PREFIX]&#x2F;bX1B6C4x86I</li>
+<li>[PREFIX]&#x2F;CotuolTvC2c</li>
+<li>[PREFIX]&#x2F;SvUFpckm0BI</li>
 </ol>
 <b>
 <b>
@@ -699,7 +751,7 @@ All together there are 6 parenting combinations to choose from. In each case gim
 
 <p>拿ChatGPT为例，首先报道此新闻的是西方技术相关媒体，而后在一周到两周的时间内，针对国内而言对此消息获悉最早的是一批以诸如微信公众号、抖音等为载体的小型科技类自媒体（非官方媒体），最后经过一系列传播，不断扩大，更多的非科技类媒体也便参与其中，使消息不断在更多人群中扩散，在49天的时间里形成了以大型媒体以及技术大厂为主体的新型传播样态。学界也涌入其中。</p>
 <p>如下图显示的是ChatGPT的全球搜索趋势</p>
-<p><img src="https://ezharjan.github.io/Blog/2023/02/13/49%E5%A4%A9%E6%95%88%E5%BA%94/49Effect.png" alt="49Effect"></p>
+<p><img src="/Blog/Blog/2023/02/13/49%E5%A4%A9%E6%95%88%E5%BA%94/49Effect.png" alt="49Effect"></p>
 </h6></h6>]]></content>
       <categories>
         <category>Notes</category>
@@ -731,43 +783,6 @@ All together there are 6 parenting combinations to choose from. In each case gim
 </h6></h6>]]></content>
       <categories>
         <category>答疑</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>Hexo Hello World</title>
-    <url>/Blog/2022/10/17/hello-world/</url>
-    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>]]></content>
-      <categories>
-        <category>Hexo Intro</category>
       </categories>
   </entry>
   <entry>
@@ -1495,7 +1510,7 @@ All together there are 6 parenting combinations to choose from. In each case gim
 <br>
 <br>
 
-<h1 id="输入法"><a href="#输入法" class="headerlink" title="输入法"></a>输入法</h1><p><img src="https://ezharjan.github.io/Blog/2022/05/15/ES6%E5%85%A5%E9%97%A8/%E7%BB%B4%E6%96%87%E8%BE%93%E5%85%A5%E6%B3%95%E9%94%AE%E7%9B%98%E5%AF%B9%E5%BA%94%E5%9B%BE.jpg" alt="输入法"></p>
+<h1 id="输入法"><a href="#输入法" class="headerlink" title="输入法"></a>输入法</h1><p><img src="/Blog/Blog/2022/05/15/ES6%E5%85%A5%E9%97%A8/%E7%BB%B4%E6%96%87%E8%BE%93%E5%85%A5%E6%B3%95%E9%94%AE%E7%9B%98%E5%AF%B9%E5%BA%94%E5%9B%BE.jpg" alt="输入法"></p>
 <br>
 <br>
 <br>
@@ -1722,7 +1737,7 @@ All together there are 6 parenting combinations to choose from. In each case gim
 </ol>
 <br>
 
-<h3 id="Appendix-II"><a href="#Appendix-II" class="headerlink" title="Appendix II"></a>Appendix II</h3><p><img src="https://ezharjan.github.io/Blog/2022/05/15/TOEFL-Experience/%E5%8F%A3%E8%AF%91%E7%AC%94%E8%AE%B0%E7%AC%A6%E5%8F%B7%E5%A4%A7%E6%B1%87%E6%80%BB.jpg" alt="TOEFL-Experience"></p>
+<h3 id="Appendix-II"><a href="#Appendix-II" class="headerlink" title="Appendix II"></a>Appendix II</h3><p><img src="/Blog/Blog/2022/05/15/TOEFL-Experience/%E5%8F%A3%E8%AF%91%E7%AC%94%E8%AE%B0%E7%AC%A6%E5%8F%B7%E5%A4%A7%E6%B1%87%E6%80%BB.jpg" alt="TOEFL-Experience"></p>
 <br>
 <br>
 <br>
@@ -5834,7 +5849,7 @@ z + per(xy)
 
 <h4 id="2-Place-the-image-you-are-gonna-use-in-your-MD-file-to-the-folder-the-same-as-your-MD-file"><a href="#2-Place-the-image-you-are-gonna-use-in-your-MD-file-to-the-folder-the-same-as-your-MD-file" class="headerlink" title="2. Place the image you are gonna use in your MD file to the folder the same as your MD file."></a>2. Place the image you are gonna use in your MD file to the folder the same as your MD file.</h4><br>
 
-<h4 id="3-Directly-use-the-image-in-your-note-in-MD-file-like-below"><a href="#3-Directly-use-the-image-in-your-note-in-MD-file-like-below" class="headerlink" title="3. Directly use the image in your note in MD file like below."></a>3. Directly use the image in your note in MD file like below.</h4><p><img src="https://ezharjan.github.io/Blog/2022/02/13/Test-Asset-Folder/camel.jpg" alt="Local Image Test"></p>
+<h4 id="3-Directly-use-the-image-in-your-note-in-MD-file-like-below"><a href="#3-Directly-use-the-image-in-your-note-in-MD-file-like-below" class="headerlink" title="3. Directly use the image in your note in MD file like below."></a>3. Directly use the image in your note in MD file like below.</h4><p><img src="/Blog/Blog/2022/02/13/Test-Asset-Folder/camel.jpg" alt="Local Image Test"></p>
 <br>
 <br>
 <br>
