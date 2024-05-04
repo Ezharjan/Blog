@@ -29,3 +29,9 @@ Try hard to rewrite the following content, make sure the meaning is the same as 
 ```
 Complete the following text:
 ```
+
+6. Comprehensive rewrite:
+
+```
+Try hard to rewrite the following content, you can add some content based on it but make sure the meaning is the same as the original meaning, try to use different words especially formal words when you rewrite:
+```
