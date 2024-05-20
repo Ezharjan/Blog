@@ -49,7 +49,7 @@ ffmpeg -i G:\源.mp4 -vf "movie=logo.png [logo];[in][logo] overlay=10:20 [out]" 
 _说明：上面截取 H:\源.mpg 这个视频，从第0秒开始，到23分20秒，这样一段，保存到G:\out.mp4，注意参数必须是 -c copy ，这样执行起来特别快，也就不到半分钟就搞定。_
 
 ```
-ffmpeg -i H:\源.mpg -ss 0:0:0 -to 0:23:20 -c copy G:\OUT.MP4
+ffmpeg -i src.mp4 -ss 0:0:0 -to 0:23:20 -c copy out.mp4
 ```
 
 8. **该编码为H265,让MP4瘦身2/3，1G的MP4可以压缩到300M**
