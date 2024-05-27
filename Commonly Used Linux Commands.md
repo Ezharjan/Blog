@@ -635,9 +635,19 @@ git config --unset core.bare
 git reset --hard
 ```
 
-1.  Clone only one branch:
+23.  Clone only one branch:
 ```bash
 git clone -b mybranch --single-branch git://sub.domain.com/repo.git
+```
+
+24. Git Unset Global Configs:
+```bash
+# view first
+git config --global -l 
+git config -l
+# unset
+git config --global --unset user.name
+git config --global --unset user.email
 ```
 
 
