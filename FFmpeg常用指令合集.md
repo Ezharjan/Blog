@@ -204,9 +204,9 @@ ffmpeg -i input.mp4 -ss 00:05:20 -t 00:10:00 -c:v copy -c:a copy output1.mp4
 ffmpeg -i video.mp4 -i audio.mp3 -c copy -map 0:v:0 -map 1:a:0 output.mp4
 ```
 
-26.  调整音频速率（输入必须得是MP4）:
+26.  调整音频速率（输入atempo必须得是0.5~2.0）:
 ```
-ffmpeg -i input.mp4 -filter:a "atempo=2.0" -vn output.mp3
+ffmpeg -i input.mp3 -filter:a "atempo=1.75" -vn output.mp3 
 ```
 
 
