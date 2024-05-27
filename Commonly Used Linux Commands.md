@@ -650,6 +650,11 @@ git config --global --unset user.name
 git config --global --unset user.email
 ```
 
+25. Unset/Remove Git credentials from this device:
+```bash
+git config --global --unset user.name
+git config --global --unset user.email
+```
 
 
 <br>
