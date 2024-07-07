@@ -324,11 +324,17 @@ netstat -antp | sort -n -k 4
 ```
 
 35. See the application running in a specific port:
-    ```bash
-    # netstat -tnlp | grep :port_number
-    netstat -tnlp | grep :8080
-    ```
- 
+```bash
+# netstat -tnlp | grep :port_number
+netstat -tnlp | grep :8080
+```
+
+36. See the CPU status:
+```bash
+sudo apt-get install htop
+htop
+```
+
 
 
 
