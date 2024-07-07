@@ -313,6 +313,15 @@ du -sh directory_name    #Gives you the summarized(-s) size of the directory in 
 du -bsh *                #Gives you the apparent(-b) summarized(-s) size of all the files and directories in the current directory in human readable(-h) format
 ```
 
+33. List all the listening ports:
+```bash
+lsof -i -P -n | grep LISTEN
+```
+
+34. List all the running applications by its port number in counter order:
+```bash
+netstat -antp | sort -n -k 4
+```
 
  
 
