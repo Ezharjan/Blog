@@ -528,6 +528,11 @@ Ctrl+b $：重命名当前会话。
 
 [点此查看更多tmux指令](https://www.ruanyifeng.com/blog/2019/10/tmux.html)。
 
+12. Save all the terminal output of this tmux session:
+```bash
+tmux capture-pane -pS - > ./tmux-buffer.txt
+```
+
 
 <br>
 
