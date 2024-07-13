@@ -1,14 +1,35 @@
-# pip install pynput opencv-python-headless
 import cv2
 import os
 import time
 from datetime import datetime, timedelta
 from pynput import mouse, keyboard
+import smtplib
+from base64 import b64encode, b64decode
 
 INTERVAL = 0.1 # minutes
+IMG_DIR = "~/Pictures/Supervised/"
+# Email configuration
+SENDER = "username@gmail.com"
+PASSWORD = "xsadsadasdwkjeqiuycgi=="
+RECIPIENT = "xxx@gmail.com"
+
+#############################################################################################################
+def ec(password):
+    return b64encode(password.encode()).decode()
+
+def dc(encrypted_password):
+    return b64decode(encrypted_password.encode()).decode()
+
+def send_email(recipients, content, subject="", sender=SENDER, pd=PASSWORD):
+    message = f"Subject: {subject}\nFrom: {sender}\nTo: {', '.join(recipients)}\n\n{content}"
+    with smtplib.SMTP('smtp.sina.com', 587) as smtp: # 587==>port4SMTP
+        smtp.starttls()
+        smtp.login(sender, dc(pd))
+        smtp.sendmail(sender, recipients, message)
+        print(f"Email sent to {', '.join(recipients)}")
 
 # Directory to save images
-save_path = os.path.expanduser("~/Pictures/Supervised/")
+save_path = os.path.expanduser(IMG_DIR)
 os.makedirs(save_path, exist_ok=True)
 
 # Flag to determine if we should keep old files
@@ -51,10 +72,20 @@ def capture_image():
         file_path = os.path.join(save_path, f"capture_{timestamp}.png")
         cv2.imwrite(file_path, frame)
         print(f"Image captured and saved to {file_path}")
+        send_image_email(file_path)
     else:
         print("Error: Could not capture image.")
 
     cap.release()
+
+def send_image_email(image_path):
+    with open(image_path, "rb") as img_file:
+        img_data = img_file.read()
+    content = f"Computer accessed. See attached image.\n\n"
+    content += f"Image captured at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
+    encoded_image = b64encode(img_data).decode('utf-8')
+    content += f"\n\nAttachment:\n{encoded_image}"
+    send_email([RECIPIENT], content, "Computer Is Accessed")
 
 # Mouse and keyboard listeners
 def on_move(x, y):
