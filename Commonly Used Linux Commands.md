@@ -537,7 +537,61 @@ tmux capture-pane -pS - > ./tmux-buffer.txt
 <br>
 
 
-# Git Commands
+# Git 配置与使用 (Git Commands)
+
+## Git 基本配置
+
+在使用 Git 时,经常会遇到一些需要配置的问题。下面我们将整理一些常见的 Git 配置相关的内容,希望对你有所帮助。
+
+### 设置用户名与邮箱
+
+在安装 Git 后,首先应设置用户名称和邮箱地址,因为每次 Git 提交都会使用这些信息,并且它们会被永久嵌入到提交记录中:
+
+```
+git config --global user.name "stormsha"  # 设置用户名
+git config --global user.email "stormsha@example.com"   # 设置邮箱
+```
+
+只需执行一次此设置,因为使用了 `--global` 选项,Git 将在整个系统中使用这些信息。如果需要在特定项目中使用不同的名称或邮箱,可以不使用 `--global` 选项来设置。
+
+### 添加或删除配置项
+
+添加配置项:
+
+```
+git config [--local|--global|--system] section.key value
+```
+
+删除配置项:
+
+```
+git config [--local|--global|--system] --unset section.key
+```
+
+### 更多配置项
+
+```
+git config --global color.ui true   # 启用终端的所有默认颜色
+git config --global alias.ci commit  # 设置别名,ci 代表 commit
+```
+
+### 所有 config 命令参数
+
+```
+git config [options]
+```
+
+### 解决 Git 每次提交和拉取代码需要输入用户名和密码的问题
+
+```
+git config --global credential.helper store
+```
+
+输入正确的用户名和密码后,即可解决此问题。
+
+注意:Git 的配置文件是纯文本格式,可以直接手动编辑。尽管如此,使用 `git config` 命令会更为简便。
+
+## Git 基本操作
 
 1. Git 暂存当前内容：
 ```bash
@@ -680,6 +734,7 @@ git config --global --unset user.email
 git config --global --unset user.name
 git config --global --unset user.email
 ```
+
 
 
 <br>
