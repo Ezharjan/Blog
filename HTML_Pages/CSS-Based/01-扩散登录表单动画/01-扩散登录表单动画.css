@@ -1,0 +1,122 @@
+* {
+    margin: 0; /* 重置默认外边距 */
+    padding: 0; /* 重置默认内边距 */
+}
+
+body {
+    height: 100vh; /* 设置body高度为视口高度 */
+    display: flex; /* 使用flex布局 */
+    justify-content: center; /* 水平居中 */
+    align-items: center; /* 垂直居中 */
+    background-color: #1d1928; /* 设置背景颜色 */
+}
+
+.container {
+    display: flex; /* 使用flex布局 */
+    justify-content: center; /* 水平居中 */
+    align-items: center; /* 垂直居中 */
+    flex-direction: column; /* 设置垂直布局 */
+    width: 350px; /* 设置宽度为350px */
+    height: 450px; /* 设置高度为450px */
+    border-radius: 20px; /* 设置圆角 */
+    background-color: #4471a3; /* 设置背景颜色 */
+    box-shadow: 15px 15px 10px rgba(33, 45, 58, 0.3); /* 设置阴影效果 */
+    overflow: hidden; /* 隐藏溢出内容 */
+    position: relative; /* 相对定位 */
+}
+
+.container form {
+    width: 350px; /* 设置表单宽度 */
+    height: 200px; /* 设置表单高度 */
+    display: flex; /* 使用flex布局 */
+    justify-content: space-around; /* 空间均分 */
+    flex-direction: column; /* 垂直布局 */
+    align-items: center; /* 垂直居中 */
+    z-index: 1; /* 设置层级 */
+}
+
+.container form .tbx {
+    width: 250px; /* 设置输入框宽度 */
+    height: 40px; /* 设置输入框高度 */
+    outline: none; /* 移除默认轮廓 */
+    border: none; /* 移除边框 */
+    border-bottom: 1px solid #fff; /* 底部边框 */
+    background: none; /* 背景透明 */
+    color: #fff; /* 文本颜色 */
+    font-size: 15px; /* 字体大小 */
+}
+
+.container form .tbx::placeholder {
+    color: #fff; /* 占位符颜色 */
+    font-size: 15px; /* 占位符字体大小 */
+}
+
+.container form .sub {
+    width: 250px; /* 设置提交按钮宽度 */
+    height: 40px; /* 设置提交按钮高度 */
+    outline: none; /* 移除默认轮廓 */
+    border: 1px solid #fff; /* 设置边框 */
+    border-radius: 20px; /* 设置圆角 */
+    letter-spacing: 5px; /* 字符间距 */
+    color: #fff; /* 文本颜色 */
+    background: none; /* 背景透明 */
+    cursor: pointer; /* 鼠标样式为手型 */
+    margin-top: 20px; /* 顶部外边距 */
+}
+
+.container h1 {
+    color: #ecf0f1; /* 标题颜色 */
+    font-size: 50px; /* 字体大小 */
+    letter-spacing: 5px; /* 字符间距 */
+    font-weight: 100; /* 字体粗细 */
+    text-shadow: 5px 5px 5px rgba(33, 45, 58, 0.3); /* 设置文本阴影 */
+    z-index: 1; /* 设置层级 */
+}
+
+.container .in {
+    position: absolute; /* 绝对定位 */
+    top: 0; /* 顶部位置 */
+    left: 0; /* 左侧位置 */
+    display: block; /* 显示元素 */
+    width: 0; /* 宽度为0 */
+    height: 0; /* 高度为0 */
+    border-radius: 50%; /* 设置圆角 */
+    background: #cf455f; /* 背景颜色 */
+    transform: translate(-50%, -50%); /* 平移 */
+    animation: in 0.5s ease-out forwards; /* 设置动画 */
+}
+
+.container .out {
+    position: absolute; /* 绝对定位 */
+    top: 0; /* 顶部位置 */
+    left: 0; /* 左侧位置 */
+    display: block; /* 显示元素 */
+    width: 1200px; /* 宽度为1200px */
+    height: 1200px; /* 高度为1200px */
+    border-radius: 50%; /* 设置圆角 */
+    background: #cf455f; /* 背景颜色 */
+    transform: translate(-50%, -50%); /* 平移 */
+    animation: out 0.5s ease-out forwards; /* 设置动画 */
+}
+
+@keyframes in {
+    0% {
+        width: 0; /* 宽度从0开始 */
+        height: 0; /* 高度从0开始 */
+    }
+    100% {
+        width: 1200px; /* 宽度达到1200像素 */
+        height: 1200px; /* 高度达到1200像素 */
+    }
+}
+
+@keyframes out {
+    0% {
+        width: 1200px; /* 宽度从1200像素开始 */
+        height: 1200px; /* 高度从1200像素开始 */
+    }
+    100% {
+        width: 0; /* 宽度减少至0 */
+        height: 0; /* 高度减少至0 */
+    }
+}

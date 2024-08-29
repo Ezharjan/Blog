@@ -157,7 +157,19 @@ netstat -nap | grep 端口号
 kill -9 进程ID
 ```
 
-14. vim show line number:
+14. Kill a Process on a Specific Port:
+```bash
+# Find the Process ID (PID)
+sudo lsof -i :PORT_NUMBER
+# Or
+sudo netstat -ltnp | grep :PORT_NUMBER
+sudo  kill  PID_GAIN_FROM_ABOVE
+# Or force kill
+sudo  kill  -9 PID_GAIN_FROM_ABOVE
+```
+
+
+15. vim show line number:
 ```bash
 set nu #show
 set nonu #hide

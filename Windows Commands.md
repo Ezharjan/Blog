@@ -25,16 +25,26 @@ Taskkill /IM "process name" /F
 Taskkill /F /PID pid_number
 ```
 
-5. Run CMD as administrator:
+5. Kill a Process on a Specific Port:
+```bash
+# Find the Process ID (PID)
+netstat -aon | findstr :PORT_NUMBER
+# Kill it
+taskkill /F /PID PID_GAIN_FROM_ABOVE
+```
+
+
+
+6. Run CMD as administrator:
    - Press Windows + R, type cmd in Run box, and press `Ctrl + Shift + Enter` to run Command Prompt as administrator.
 
 
-6. Check the Hash code of a file using Powershell ([Reference](https://docs.precisely.com/docs/sftw/spectrum/ProductUpdateSummary/ProductUpdateSummary/source/about_sha256.html)):
+7. Check the Hash code of a file using Powershell ([Reference](https://docs.precisely.com/docs/sftw/spectrum/ProductUpdateSummary/ProductUpdateSummary/source/about_sha256.html)):
 ```bash
 Get-fileHash <file_name>
 ```
 
-7. Other useful commands([Reference](https://www.youtube.com/watch?v=Jfvg3CS1X3A)):
+8. Other useful commands([Reference](https://www.youtube.com/watch?v=Jfvg3CS1X3A)):
 ```bash
 ipconfig
 ipconfig /all
