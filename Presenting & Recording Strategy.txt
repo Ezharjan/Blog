@@ -1,0 +1,8 @@
+Presenting & Recording Strategy
+1. Connect with a monitor using the HDMI cable;
+2. Hit F5 to start the PPT;
+3. Swap the view to the mmonitor's;
+4. Open EVPlayer for cording;
+5. Set the proper configuration for the EVPlayer for the best quality of videos to be recorded;
+6. Configure the connected camera view (size&location) making the opened-PPT view as a background;
+7. Start recording.
