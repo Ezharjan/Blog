@@ -16,4 +16,19 @@
     prod_result = tensor.prod(a)
     print("所有元素的乘积:", prod_result)
     ```
-5. 
+5. torch.sum为求和：
+   ```python
+    import torch
+    # 创建一个二维张量
+    a = torch.tensor([[2, 3, 5], [1, 4, 9]])    
+    # 计算所有元素的总和
+    total_sum = torch.sum(a)
+    print("总和:", total_sum)  # 输出: tensor(24)   
+    # 沿列求和
+    sum_dim0 = torch.sum(a, dim=0)
+    print("沿列求和:", sum_dim0)  # 输出: tensor([3, 7, 14])    
+    # 沿行求和
+    sum_dim1 = torch.sum(a, dim=1)
+    print("沿行求和:", sum_dim1)  # 输出: tensor([10, 14])
+   ```
+6. 
