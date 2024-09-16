@@ -31,4 +31,5 @@
     sum_dim1 = torch.sum(a, dim=1)
     print("沿行求和:", sum_dim1)  # 输出: tensor([10, 14])
    ```
-6. 
+6. 111
+7. 222
