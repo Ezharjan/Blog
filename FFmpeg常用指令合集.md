@@ -210,6 +210,16 @@ ffmpeg -i input.mp3 -filter:a "atempo=1.75" -vn output.mp3
 ```
 
 
+27. To split an MP3 audio file using ffmpeg, you can use the following command:
+```
+ffmpeg -i input.mp3 -ss 00:00:30 -to 00:01:00 -c copy output.mp3
+```
+
+
+
+
+
+
 <br><br><br><br>
 
 
