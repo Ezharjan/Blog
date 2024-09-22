@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>退休年龄计算器</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        .scoreboard {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+            font-size: 24px;
+            color: #fff;
+        }
+
+        .scoreboard-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0 10px;
+            padding: 10px;
+            border: 2px solid #333;
+            border-radius: 5px;
+            min-width: 60px;
+            background-color: #007bff;
+        }
+
+        .scoreboard-value {
+            font-size: 2em;
+            line-height: 1;
+            margin-bottom: 5px;
+        }
+
+        .scoreboard-unit {
+            font-size: 1em;
+            font-weight: bold;
+        }
+
+        .fullscreen-btn {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .fullscreen-btn:hover {
+            background-color: #0056b3;
+        }
+
+        /* 全屏样式 */
+        .fullscreen-scoreboard {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: white;
+            z-index: 1000;
+        }
+
+        .fullscreen-scoreboard .scoreboard {
+            font-size: 48px;
+        }
+
+        .fullscreen-scoreboard .scoreboard-item {
+            padding: 20px;
+            font-size: 48px;
+        }
+
+        .fullscreen-scoreboard .scoreboard-value {
+            font-size: 4em;
+        }
+
+        .fullscreen-scoreboard .scoreboard-unit {
+            font-size: 1.5em;
+        }
+
+        .fullscreen-scoreboard .timer-label {
+            position: absolute;
+            top: 200px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 40px;
+			color: #87CEEB; 
+            font-weight: bold;
+        }
+
+        .countdown-container {
+            position: relative;
+            text-align: center;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="max-w-2xl mx-auto p-8">
+        <div class="bg-white p-6 rounded-lg shadow-lg">
+            <div class="mb-4">
+                <label class="block text-gray-700 text-lg font-bold mb-2">性别/职务：</label>
+                <select id="gender" class="block w-full p-2 border border-gray-300 rounded-lg">
+                    <option value="male">男性</option>
+                    <option value="female_worker">女性-工人（原50岁）</option>
+                    <option value="female_cadre">女性-干部（原55岁）</option>
+                </select>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 text-lg font-bold mb-2">出生日期：</label>
+                <input type="month" id="birthDate" class="block w-full p-2 border border-gray-300 rounded-lg" />
+            </div>
+            <div class="flex space-x-4 mb-6">
+                <button id="calculateBtn" class="bg-blue-500 text-white py-2 px-4 rounded-lg">开始计算</button>
+                <button id="clearBtn" class="bg-gray-500 text-white py-2 px-4 rounded-lg">清除</button>
+            </div>
+            <div id="result" class="mt-6">
+                <table class="w-full bg-white shadow-md rounded-lg overflow-hidden">
+                    <tbody>
+                        <tr class="border-b">
+                            <td class="p-4 text-gray-700">退休年龄：</td>
+                            <td id="retirementAge" class="p-4 text-blue-600"></td>
+                        </tr>
+                        <tr class="border-b">
+                            <td class="p-4 text-gray-700">退休日期：</td>
+                            <td id="retirementDate" class="p-4 text-red-600"></td>
+                        </tr>
+                        <tr>
+                            <td class="p-4 text-gray-700">退休推迟：</td>
+                            <td id="additionalMonths" class="p-4 text-green-600"></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div id="countdownContainer" class="countdown-container">
+                    <div id="countdownTimerLabel" class="timer-label" style="display:none;">距离退休还剩：</div>
+                    <div id="countdown" class="scoreboard"></div>
+                </div>
+                <button id="fullscreenBtn" class="fullscreen-btn">全屏显示倒计时</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('calculateBtn').addEventListener('click', function() {
+            const genderType = document.getElementById('gender').value;
+            const birthDateValue = document.getElementById('birthDate').value;
+            if (birthDateValue) {
+                const birthDate = new Date(birthDateValue);
+                const birthYear = birthDate.getFullYear();
+                const birthMonth = birthDate.getMonth() + 1;
+                let retirementBaseAge = 50; 
+                let additionalMonths = 0;
+
+                if (genderType === 'male') {
+                    if (birthYear >= 1965 && birthYear <= 1976) {
+                        const startYear = 1965;
+                        additionalMonths = calculateAdditionalMonths(birthYear, birthMonth, startYear, 4) + 1;
+                    } else if (birthYear > 1976) {
+                        additionalMonths = 36; 
+                    }
+                    retirementBaseAge = 60; 
+                } else if (genderType === 'female_cadre') {
+                    if (birthYear >= 1970 && birthYear <= 1981) {
+                        const startYear = 1970;
+                        additionalMonths = calculateAdditionalMonths(birthYear, birthMonth, startYear, 4) + 1;
+                    } else if (birthYear > 1981) {
+                        additionalMonths = 36; 
+                    }
+                    retirementBaseAge = 55;
+                } else if (genderType === 'female_worker') {
+                    if (birthYear >= 1975 && birthYear <= 1984) {
+                        const startYear = 1975;
+                        additionalMonths = calculateAdditionalMonths(birthYear, birthMonth, startYear, 2) + 1;
+                    } else if (birthYear > 1984) {
+                        additionalMonths = 60; 
+                    }
+                    retirementBaseAge = 50; 
+                }
+
+                const totalMonths = additionalMonths % 12;
+                const additionalYears = Math.floor(additionalMonths / 12);
+                const retirementYear = birthYear + retirementBaseAge + additionalYears;
+                const retirementMonth = birthMonth - 1 + totalMonths;
+                const retirementDate = new Date(retirementYear, retirementMonth, 1);
+
+                document.getElementById('retirementAge').innerText = `${retirementBaseAge + additionalYears}岁${totalMonths}个月`;
+                document.getElementById('retirementDate').innerText = `${retirementDate.getFullYear()}年${retirementDate.getMonth() + 1}月`;
+
+                const originalRetirementDate = new Date(birthYear + retirementBaseAge, birthMonth - 1, 1);
+                const monthsDifference = (retirementDate - originalRetirementDate) / (1000 * 60 * 60 * 24 * 30.44);
+                document.getElementById('additionalMonths').innerText = `${Math.floor(monthsDifference)}个月`;
+
+                document.getElementById('countdownTimerLabel').style.display = 'block';
+                startCountdown(retirementDate);
+            } else {
+                alert("请选择出生日期！");
+            }
+        });
+
+        function calculateAdditionalMonths(year, month, startYear, interval) {
+            let monthsFromStart = (year - startYear) * 12 + month - 1;
+            return Math.floor(monthsFromStart / interval); 
+        }
+
+        function startCountdown(endTime) {
+            const countdownElement = document.getElementById('countdown');
+            let intervalId;
+
+            function updateCountdown() {
+                const now = new Date().getTime();
+                const distance = endTime - now;
+
+                if (distance > 0) {
+                    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                    renderCountdown(days, hours, minutes, seconds);
+                } else {
+                    clearInterval(intervalId);
+                    renderCountdown(0, 0, 0, 0);
+                }
+            }
+
+            function renderCountdown(days, hours, minutes, seconds) {
+                const values = [days, hours, minutes, seconds];
+                const units = ['天', '时', '分', '秒'];
+                
+                countdownElement.innerHTML = '';
+                for (let i = 0; i < values.length; i++) {
+                    const value = values[i].toString().padStart(2, '0');
+                    const unit = units[i];
+
+                    const scoreboardItem = document.createElement('div');
+                    scoreboardItem.classList.add('scoreboard-item');
+
+                    const scoreboardValue = document.createElement('div');
+                    scoreboardValue.classList.add('scoreboard-value');
+                    scoreboardValue.innerText = value;
+
+                    const scoreboardUnit = document.createElement('div');
+                    scoreboardUnit.classList.add('scoreboard-unit');
+                    scoreboardUnit.innerText = unit;
+
+                    scoreboardItem.appendChild(scoreboardValue);
+                    scoreboardItem.appendChild(scoreboardUnit);
+                    countdownElement.appendChild(scoreboardItem);
+                }
+            }
+
+            intervalId = setInterval(updateCountdown, 1000);
+            updateCountdown(); // 初始化显示
+        }
+
+        document.getElementById('clearBtn').addEventListener('click', function() {
+			location.reload();
+        });
+
+        document.getElementById('fullscreenBtn').addEventListener('click', function() {
+            const elem = document.getElementById('countdownContainer');
+            const timerLabel = document.getElementById('countdownTimerLabel');
+
+            if (document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement || document.msFullscreenElement) {
+                // 如果已经是全屏状态，则退出全屏
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.mozCancelFullScreen) { /* Firefox */
+                    document.mozCancelFullScreen();
+                } else if (document.webkitExitFullscreen) { /* Chrome, Safari and Opera */
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) { /* IE/Edge */
+                    document.msExitFullscreen();
+                }
+                document.getElementById('countdownTimerLabel').style.display = 'none';
+            } else {
+                // 否则进入全屏状态
+                if (elem.requestFullscreen) {
+                    elem.requestFullscreen();
+                } else if (elem.mozRequestFullScreen) { /* Firefox */
+                    elem.mozRequestFullScreen();
+                } else if (elem.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
+                    elem.webkitRequestFullscreen();
+                } else if (elem.msRequestFullscreen) { /* IE/Edge */
+                    elem.msRequestFullscreen();
+                }
+                document.getElementById('countdownTimerLabel').style.display = 'block';
+            }
+        });
+
+        // 监听全屏变化事件
+        document.addEventListener('fullscreenchange', function() {
+            if (document.fullscreenElement) {
+                document.getElementById('countdownContainer').classList.add('fullscreen-scoreboard');
+                document.getElementById('countdownTimerLabel').style.display = 'block';
+            } else {
+                document.getElementById('countdownContainer').classList.remove('fullscreen-scoreboard');
+                document.getElementById('countdownTimerLabel').style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
